@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class DrawerComponent extends StatefulWidget {
-  const DrawerComponent({super.key});
+  const DrawerComponent({Key? key}) : super(key: key);
 
   @override
   State<DrawerComponent> createState() => _DrawerComponentState();

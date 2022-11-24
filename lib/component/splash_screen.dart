@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:polije_complaint_information_system_mobile/pages/landing.dart';
 
 class SplashScreen extends StatefulWidget {
-  const SplashScreen({super.key});
+  const SplashScreen({Key? key}) : super(key: key);
 
   @override
   State<SplashScreen> createState() => _SplashScreenState();
