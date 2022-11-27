@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-// import 'package:polije_complaint_information_system_mobile/component/splash_screen.dart';
-import 'package:polije_complaint_information_system_mobile/pages/landing.dart';
+import 'package:polije_complaint_information_system_mobile/component/splash_screen.dart';
 
 void main() {
   runApp(const MyApp());
@@ -14,7 +13,7 @@ class MyApp extends StatelessWidget {
     return const MaterialApp(
       title: 'Polije Complaint Information System',
       debugShowCheckedModeBanner: false,
-      home: Landing(),
+      home: SplashScreen(),
     );
   }
 }

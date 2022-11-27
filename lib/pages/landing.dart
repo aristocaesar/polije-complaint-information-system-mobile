@@ -14,77 +14,95 @@ class _LandingState extends State<Landing> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      key: _scaffoldKey,
-      appBar: AppBar(
-        title: const Text("POLIJE",
-            style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-                color: Colors.white,
-                letterSpacing: 1,
-                fontFamily: "Poppins")),
-        automaticallyImplyLeading: false,
-        backgroundColor: const Color.fromRGBO(15, 76, 117, 100),
-        actions: <Widget>[
-          Padding(
-              padding: const EdgeInsets.only(right: 20.0),
-              child: IconButton(
-                  icon: const Icon(Icons.menu, color: Colors.white),
-                  onPressed: () => _scaffoldKey.currentState?.openDrawer())),
-        ],
-      ),
-      drawer: const DrawerComponent(),
-      body: Container(
-        width: double.infinity,
-        decoration: const BoxDecoration(
-            image: DecorationImage(
-                image: AssetImage("/images/background-app.png"),
-                fit: BoxFit.fill)),
-        child: Column(
-          children: <Widget>[
-            const SizedBox(height: 80),
-            const Center(
-              child: Text(
-                "Layanan",
-                style: TextStyle(
-                    fontSize: 35,
-                    color: Colors.white,
-                    fontFamily: "Poppins",
-                    fontWeight: FontWeight.bold),
-              ),
-            ),
-            const SizedBox(height: 50),
-            Container(
-              width: double.infinity,
-              decoration: const BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.only(
-                  topRight: Radius.circular(40.0),
-                  topLeft: Radius.circular(40.0),
-                ),
-              ),
-              child: Padding(
-                  padding: const EdgeInsets.all(40.0),
-                  child: Column(
-                    children: [
-                      ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor:
-                              const Color.fromRGBO(15, 76, 117, 100),
-                          minimumSize: const Size.fromHeight(50), // NEW
-                        ),
-                        onPressed: () {},
-                        child: const Text(
-                          'Laporan',
-                          style: TextStyle(fontSize: 24, fontFamily: "Poppins"),
-                        ),
-                      ),
-                    ],
-                  )),
-            ),
+        key: _scaffoldKey,
+        extendBodyBehindAppBar: true,
+        appBar: AppBar(
+          title: const Text("POLIJE",
+              style: TextStyle(
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white,
+                  letterSpacing: 1,
+                  fontFamily: "Poppins")),
+          automaticallyImplyLeading: false,
+          backgroundColor: Colors.transparent,
+          elevation: 0,
+          actions: <Widget>[
+            Padding(
+                padding: const EdgeInsets.only(right: 20.0),
+                child: IconButton(
+                    icon: const Icon(Icons.menu, color: Colors.white),
+                    onPressed: () => _scaffoldKey.currentState?.openDrawer())),
           ],
         ),
-      ),
-    );
+        drawer: const DrawerComponent(),
+        body: Container(
+            decoration: const BoxDecoration(
+              image: DecorationImage(
+                  image: AssetImage("assets/images/background-app.png"),
+                  fit: BoxFit.cover),
+            ),
+            child: Column(
+              children: <Widget>[
+                const SizedBox(height: 150),
+                const Center(
+                  child: Text(
+                    "Layanan",
+                    style: TextStyle(
+                        fontSize: 35,
+                        color: Colors.white,
+                        fontFamily: "Poppins",
+                        fontWeight: FontWeight.bold),
+                  ),
+                ),
+                const SizedBox(height: 100),
+                Container(
+                  height: MediaQuery.of(context).size.height - 303,
+                  decoration: const BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.only(
+                          topLeft: Radius.circular(50.0),
+                          topRight: Radius.circular(50.0))),
+                  child: Padding(
+                    padding: const EdgeInsets.only(
+                        top: 50.0, right: 30.0, left: 30.0),
+                    child: Column(
+                      children: <Widget>[
+                        _buildItemKlasifikasi(Icons.menu, "Lapor",
+                            "Laporkan sebuah informasi", "/laporan"),
+                        _buildItemKlasifikasi(Icons.menu, "Lapor",
+                            "Laporkan sebuah informasi", "/laporan"),
+                        _buildItemKlasifikasi(Icons.menu, "Lapor",
+                            "Laporkan sebuah informasi", "/laporan")
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            )));
   }
+}
+
+Widget _buildItemKlasifikasi(
+    IconData icon, String title, String description, String push) {
+  return Column(
+    children: [
+      Container(
+        height: 80,
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: const BorderRadius.all(Radius.circular(20.0)),
+          boxShadow: [
+            BoxShadow(
+                color: Colors.grey.withOpacity(0.5), //color of shadow
+                spreadRadius: 0, //spread radius
+                blurRadius: 5, // blur radius
+                offset: const Offset(0, 4))
+          ],
+        ),
+        child: Center(child: Text(title)),
+      ),
+      const SizedBox(height: 25)
+    ],
+  );
 }

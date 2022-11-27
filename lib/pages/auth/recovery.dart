@@ -1,22 +1,20 @@
 import 'package:flutter/material.dart';
-import 'package:polije_complaint_information_system_mobile/pages/auth/recovery.dart';
+import 'package:polije_complaint_information_system_mobile/pages/auth/login.dart';
 import 'package:polije_complaint_information_system_mobile/pages/auth/register.dart';
-import 'package:polije_complaint_information_system_mobile/pages/landing.dart';
 
-class Login extends StatefulWidget {
-  const Login({Key? key}) : super(key: key);
+class Recovery extends StatefulWidget {
+  const Recovery({Key? key}) : super(key: key);
 
   @override
-  State<Login> createState() => _LoginState();
+  State<Recovery> createState() => _RecoveryState();
 }
 
-class _LoginState extends State<Login> {
+class _RecoveryState extends State<Recovery> {
   // form state
   final _formKey = GlobalKey<FormState>();
 
   // controller
   final _emailController = TextEditingController();
-  final _passwordController = TextEditingController();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -31,7 +29,7 @@ class _LoginState extends State<Login> {
                 const SizedBox(height: 100),
                 const Center(
                   child: Text(
-                    "Login",
+                    "Lupa Password",
                     style: TextStyle(
                         fontSize: 45,
                         color: Colors.white,
@@ -78,55 +76,6 @@ class _LoginState extends State<Login> {
                                 const SizedBox(
                                   height: 30,
                                 ),
-                                const Text(
-                                  "Password",
-                                  style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontFamily: 'Poppins',
-                                      fontSize: 18),
-                                ),
-                                const SizedBox(
-                                  height: 10,
-                                ),
-                                TextFormField(
-                                  controller: _passwordController,
-                                  decoration: InputDecoration(
-                                    hintText: "Ketikkan Password",
-                                    border: OutlineInputBorder(
-                                        borderRadius:
-                                            BorderRadius.circular(5.0)),
-                                  ),
-                                ),
-                                const SizedBox(
-                                  height: 10,
-                                ),
-                                TextButton(
-                                  onPressed: () {
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                          builder: (context) =>
-                                              const Recovery()),
-                                    );
-                                  },
-                                  style: ButtonStyle(
-                                    alignment: Alignment.centerLeft,
-                                    padding: MaterialStateProperty.all<
-                                        EdgeInsetsGeometry>(
-                                      EdgeInsets.zero,
-                                    ),
-                                  ),
-                                  child: const Text(
-                                    'Lupa Password ?',
-                                    style: TextStyle(
-                                        color:
-                                            Color.fromARGB(255, 106, 106, 106),
-                                        fontFamily: "Poppins"),
-                                  ),
-                                ),
-                                const SizedBox(
-                                  height: 10,
-                                ),
                                 SizedBox(
                                   width: 200,
                                   height: 60,
@@ -140,13 +89,18 @@ class _LoginState extends State<Login> {
                                     ),
                                     onPressed: () {
                                       try {
-                                        if (_loginSubmit(_emailController.text,
-                                            _passwordController.text)) {
+                                        if (_recoverySubmit(
+                                            _emailController.text)) {
+                                          ScaffoldMessenger.of(context)
+                                              .showSnackBar(const SnackBar(
+                                            content: Text(
+                                                "Tautan berhasil dikirimkan, silakan cek email!"),
+                                          ));
                                           Navigator.push(
                                             context,
                                             MaterialPageRoute(
                                                 builder: (context) =>
-                                                    const Landing()),
+                                                    const Login()),
                                           );
                                         }
                                       } catch (e) {
@@ -157,7 +111,7 @@ class _LoginState extends State<Login> {
                                       }
                                     },
                                     child: const Text(
-                                      "Login",
+                                      "Kirim",
                                       style: TextStyle(
                                           color: Color(0xffffffff),
                                           fontSize: 18,
@@ -218,7 +172,7 @@ class _LoginState extends State<Login> {
   }
 }
 
-_loginSubmit(String email, String password) {
+_recoverySubmit(String email) {
   // print(email);
   // print(password);
   return true;

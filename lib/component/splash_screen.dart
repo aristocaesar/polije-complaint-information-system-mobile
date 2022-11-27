@@ -1,7 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:polije_complaint_information_system_mobile/pages/landing.dart';
+import 'package:polije_complaint_information_system_mobile/pages/auth/login.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({Key? key}) : super(key: key);
@@ -20,7 +20,7 @@ class _SplashScreenState extends State<SplashScreen> {
   splashScreenStart() async {
     return Timer(const Duration(seconds: 5), () {
       Navigator.push(
-          context, MaterialPageRoute(builder: (context) => const Landing()));
+          context, MaterialPageRoute(builder: (context) => const Login()));
     });
   }
 
@@ -31,15 +31,15 @@ class _SplashScreenState extends State<SplashScreen> {
         decoration: const BoxDecoration(
             image: DecorationImage(
                 image: AssetImage(
-                    "/images/background-politeknik-negeri-jember.png"),
-                fit: BoxFit.fill)),
+                    "assets/images/background-politeknik-negeri-jember.png"),
+                fit: BoxFit.cover)),
         child: Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: <Widget>[
               Image.asset(
-                "/images/logo-politeknik-negeri-jember.png",
+                "assets/images/logo-politeknik-negeri-jember.png",
                 width: 100,
               ),
               const Text(

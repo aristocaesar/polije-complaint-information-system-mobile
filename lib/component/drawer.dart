@@ -14,36 +14,37 @@ class _DrawerComponentState extends State<DrawerComponent> {
       child: ListView(
         padding: EdgeInsets.zero,
         children: [
-          const DrawerHeader(
-              decoration: BoxDecoration(
-                color: Color.fromRGBO(15, 76, 117, 100),
+          UserAccountsDrawerHeader(
+            decoration: const BoxDecoration(
+              color: Color.fromRGBO(15, 76, 117, 1),
+            ),
+            currentAccountPicture: CircleAvatar(
+              child: ClipOval(
+                child: Image.network(
+                  'https://image.shutterstock.com/shutterstock/photos/1436193641/display_1500/stock-vector-japanese-samurai-soldier-on-illustration-1436193641.jpg',
+                  width: 100,
+                  height: 100,
+                  fit: BoxFit.cover,
+                ),
               ),
-              child: UserAccountsDrawerHeader(
-                decoration: BoxDecoration(
-                  color: Color.fromRGBO(15, 76, 117, 100),
-                ),
-                currentAccountPicture: ClipOval(
-                  child: FlutterLogo(
-                    size: 300,
-                    textColor: Colors.blue,
-                    style: FlutterLogoStyle.stacked,
-                  ),
-                ),
-                accountName: Text(
-                  'Ferdy Sambo',
-                  style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white,
-                      fontFamily: "Poppins"),
-                ),
-                accountEmail: Text(
-                  'ferdysambo@kapolri.gov.id',
-                  style: TextStyle(
-                      fontWeight: FontWeight.w100,
-                      color: Colors.white,
-                      fontFamily: "Poppins"),
-                ),
-              )),
+            ),
+            accountName: const Text(
+              'Ferdy Sambo',
+              style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white,
+                  fontFamily: "Poppins"),
+            ),
+            accountEmail: const Text(
+              'ferdysambo@kapolri.gov.id',
+              style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.w100,
+                  color: Colors.white,
+                  fontFamily: "Poppins"),
+            ),
+          ),
           ListTile(
             title: const Text(
               'Layanan',
