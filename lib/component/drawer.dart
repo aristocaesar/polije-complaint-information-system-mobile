@@ -1,3 +1,4 @@
+import 'package:elapor_polije/pages/menus/setting.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:elapor_polije/pages/landing.dart';
@@ -75,8 +76,10 @@ class _DrawerComponentState extends State<DrawerComponent> {
                 style: TextStyle(fontFamily: "Poppins")),
             leading: const Icon(Icons.settings),
             onTap: () {
-              // Update the state of the app.
-              // ...
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const Setting()),
+              );
             },
           ),
           ListTile(

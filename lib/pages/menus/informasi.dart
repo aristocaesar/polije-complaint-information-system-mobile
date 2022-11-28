@@ -1,5 +1,6 @@
 // import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:elapor_polije/component/hero_main.dart';
 import 'package:elapor_polije/component/drawer.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:file_picker/file_picker.dart';
@@ -47,38 +48,7 @@ class _InformasiState extends State<Informasi> {
             ),
             child: Column(
               children: <Widget>[
-                Padding(
-                  padding: const EdgeInsets.all(30.0),
-                  child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        const Text(
-                          "POLIJE",
-                          style: TextStyle(
-                              fontSize: 30,
-                              color: Colors.white,
-                              fontFamily: "Poppins",
-                              fontWeight: FontWeight.bold),
-                        ),
-                        IconButton(
-                            icon: const Icon(Icons.menu,
-                                size: 35, color: Colors.white),
-                            onPressed: () =>
-                                {_scaffoldKey.currentState?.openDrawer()})
-                      ]),
-                ),
-                const SizedBox(height: 50),
-                const Center(
-                  child: Text(
-                    "Informasi",
-                    style: TextStyle(
-                        fontSize: 45,
-                        color: Colors.white,
-                        fontFamily: "Poppins",
-                        fontWeight: FontWeight.bold),
-                  ),
-                ),
-                const SizedBox(height: 100),
+                HeroComponent(title: "Informasi", drawer: _scaffoldKey),
                 Expanded(
                   child: Container(
                     decoration: const BoxDecoration(

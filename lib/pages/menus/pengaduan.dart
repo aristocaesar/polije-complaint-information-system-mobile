@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:elapor_polije/component/hero_main.dart';
 import 'package:elapor_polije/component/drawer.dart';
 
 class Pengaduan extends StatefulWidget {
@@ -24,38 +25,7 @@ class _PengaduanState extends State<Pengaduan> {
             ),
             child: Column(
               children: <Widget>[
-                Padding(
-                  padding: const EdgeInsets.all(30.0),
-                  child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        const Text(
-                          "POLIJE",
-                          style: TextStyle(
-                              fontSize: 30,
-                              color: Colors.white,
-                              fontFamily: "Poppins",
-                              fontWeight: FontWeight.bold),
-                        ),
-                        IconButton(
-                            icon: const Icon(Icons.menu,
-                                size: 35, color: Colors.white),
-                            onPressed: () =>
-                                {_scaffoldKey.currentState?.openDrawer()})
-                      ]),
-                ),
-                const SizedBox(height: 50),
-                const Center(
-                  child: Text(
-                    "Pengaduan",
-                    style: TextStyle(
-                        fontSize: 45,
-                        color: Colors.white,
-                        fontFamily: "Poppins",
-                        fontWeight: FontWeight.bold),
-                  ),
-                ),
-                const SizedBox(height: 100),
+                HeroComponent(title: "Pengaduan", drawer: _scaffoldKey),
                 Expanded(
                   child: Container(
                     decoration: const BoxDecoration(
