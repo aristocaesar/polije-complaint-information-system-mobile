@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:polije_complaint_information_system_mobile/component/drawer.dart';
+import 'package:elapor_polije/component/drawer.dart';
+import 'package:elapor_polije/pages/menus/aspirasi.dart';
+import 'package:elapor_polije/pages/menus/informasi.dart';
+import 'package:elapor_polije/pages/menus/pengaduan.dart';
 
 class Landing extends StatefulWidget {
   const Landing({Key? key}) : super(key: key);
@@ -15,26 +18,6 @@ class _LandingState extends State<Landing> {
   Widget build(BuildContext context) {
     return Scaffold(
         key: _scaffoldKey,
-        extendBodyBehindAppBar: true,
-        appBar: AppBar(
-          title: const Text("POLIJE",
-              style: TextStyle(
-                  fontSize: 24,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.white,
-                  letterSpacing: 1,
-                  fontFamily: "Poppins")),
-          automaticallyImplyLeading: false,
-          backgroundColor: Colors.transparent,
-          elevation: 0,
-          actions: <Widget>[
-            Padding(
-                padding: const EdgeInsets.only(right: 20.0),
-                child: IconButton(
-                    icon: const Icon(Icons.menu, color: Colors.white),
-                    onPressed: () => _scaffoldKey.currentState?.openDrawer())),
-          ],
-        ),
         drawer: const DrawerComponent(),
         body: Container(
             decoration: const BoxDecoration(
@@ -44,37 +27,72 @@ class _LandingState extends State<Landing> {
             ),
             child: Column(
               children: <Widget>[
-                const SizedBox(height: 150),
+                Padding(
+                  padding: const EdgeInsets.all(30.0),
+                  child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        const Text(
+                          "POLIJE",
+                          style: TextStyle(
+                              fontSize: 30,
+                              color: Colors.white,
+                              fontFamily: "Poppins",
+                              fontWeight: FontWeight.bold),
+                        ),
+                        IconButton(
+                            icon: const Icon(Icons.menu,
+                                size: 35, color: Colors.white),
+                            onPressed: () =>
+                                {_scaffoldKey.currentState?.openDrawer()})
+                      ]),
+                ),
+                const SizedBox(height: 50),
                 const Center(
                   child: Text(
                     "Layanan",
                     style: TextStyle(
-                        fontSize: 35,
+                        fontSize: 45,
                         color: Colors.white,
                         fontFamily: "Poppins",
                         fontWeight: FontWeight.bold),
                   ),
                 ),
                 const SizedBox(height: 100),
-                Container(
-                  height: MediaQuery.of(context).size.height - 303,
-                  decoration: const BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.only(
-                          topLeft: Radius.circular(50.0),
-                          topRight: Radius.circular(50.0))),
-                  child: Padding(
-                    padding: const EdgeInsets.only(
-                        top: 50.0, right: 30.0, left: 30.0),
-                    child: Column(
-                      children: <Widget>[
-                        _buildItemKlasifikasi(Icons.menu, "Lapor",
-                            "Laporkan sebuah informasi", "/laporan"),
-                        _buildItemKlasifikasi(Icons.menu, "Lapor",
-                            "Laporkan sebuah informasi", "/laporan"),
-                        _buildItemKlasifikasi(Icons.menu, "Lapor",
-                            "Laporkan sebuah informasi", "/laporan")
-                      ],
+                Expanded(
+                  child: Container(
+                    decoration: const BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.only(
+                            topLeft: Radius.circular(50.0),
+                            topRight: Radius.circular(50.0))),
+                    child: Container(
+                      padding: const EdgeInsets.all(20.0),
+                      child: Padding(
+                          padding: const EdgeInsets.only(
+                              top: 20.0, right: 20.0, left: 20.0),
+                          child: ListView(
+                            children: [
+                              _buildItemKlasifikasi(
+                                  context,
+                                  Icons.chat_bubble_outline,
+                                  "Pengaduan",
+                                  "Tanyakan informasi mengenai kampus",
+                                  const Pengaduan()),
+                              _buildItemKlasifikasi(
+                                  context,
+                                  Icons.send,
+                                  "Aspirasi",
+                                  "Tanyakan informasi mengenai kampus",
+                                  const Aspirasi()),
+                              _buildItemKlasifikasi(
+                                  context,
+                                  Icons.info,
+                                  "Informasi",
+                                  "Tanyakan informasi mengenai kampus",
+                                  const Informasi())
+                            ],
+                          )),
                     ),
                   ),
                 ),
@@ -83,24 +101,42 @@ class _LandingState extends State<Landing> {
   }
 }
 
-Widget _buildItemKlasifikasi(
-    IconData icon, String title, String description, String push) {
+Widget _buildItemKlasifikasi(BuildContext ctx, IconData icon, String title,
+    String description, Widget push) {
   return Column(
     children: [
-      Container(
-        height: 80,
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: const BorderRadius.all(Radius.circular(20.0)),
-          boxShadow: [
-            BoxShadow(
-                color: Colors.grey.withOpacity(0.5), //color of shadow
-                spreadRadius: 0, //spread radius
-                blurRadius: 5, // blur radius
-                offset: const Offset(0, 4))
-          ],
-        ),
-        child: Center(child: Text(title)),
+      GestureDetector(
+        onTap: () {
+          Navigator.push(
+            ctx,
+            MaterialPageRoute(builder: (context) => push),
+          );
+        },
+        child: Card(
+            elevation: 2,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(15),
+            ),
+            child: Padding(
+              padding: const EdgeInsets.only(top: 15.0, bottom: 15.0),
+              child: ListTile(
+                  leading: Icon(icon,
+                      size: 40, color: const Color.fromRGBO(15, 76, 117, 1)),
+                  title: Text(
+                    title,
+                    style: const TextStyle(
+                        color: Color.fromRGBO(15, 76, 117, 1),
+                        fontWeight: FontWeight.bold,
+                        fontSize: 22,
+                        fontFamily: "Poppins"),
+                  ),
+                  subtitle: Text(description,
+                      style: const TextStyle(
+                          color: Color.fromARGB(255, 217, 217, 217),
+                          fontWeight: FontWeight.w400,
+                          fontSize: 15,
+                          fontFamily: "Poppins"))),
+            )),
       ),
       const SizedBox(height: 25)
     ],

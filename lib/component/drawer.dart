@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:elapor_polije/pages/landing.dart';
+import 'package:elapor_polije/pages/menus/about.dart';
 
 class DrawerComponent extends StatefulWidget {
   const DrawerComponent({Key? key}) : super(key: key);
@@ -20,10 +23,8 @@ class _DrawerComponentState extends State<DrawerComponent> {
             ),
             currentAccountPicture: CircleAvatar(
               child: ClipOval(
-                child: Image.network(
-                  'https://image.shutterstock.com/shutterstock/photos/1436193641/display_1500/stock-vector-japanese-samurai-soldier-on-illustration-1436193641.jpg',
-                  width: 100,
-                  height: 100,
+                child: Image.asset(
+                  'assets/images/USER-default.png',
                   fit: BoxFit.cover,
                 ),
               ),
@@ -31,7 +32,7 @@ class _DrawerComponentState extends State<DrawerComponent> {
             accountName: const Text(
               'Ferdy Sambo',
               style: TextStyle(
-                  fontSize: 20,
+                  fontSize: 16,
                   fontWeight: FontWeight.bold,
                   color: Colors.white,
                   fontFamily: "Poppins"),
@@ -39,9 +40,9 @@ class _DrawerComponentState extends State<DrawerComponent> {
             accountEmail: const Text(
               'ferdysambo@kapolri.gov.id',
               style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.w100,
-                  color: Colors.white,
+                  fontSize: 14,
+                  fontWeight: FontWeight.w400,
+                  color: Color.fromARGB(255, 203, 203, 203),
                   fontFamily: "Poppins"),
             ),
           ),
@@ -52,8 +53,10 @@ class _DrawerComponentState extends State<DrawerComponent> {
             ),
             leading: const Icon(Icons.layers),
             onTap: () {
-              // Update the state of the app.
-              // ...
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const Landing()),
+              );
             },
           ),
           ListTile(
@@ -81,8 +84,10 @@ class _DrawerComponentState extends State<DrawerComponent> {
                 const Text('Tentang', style: TextStyle(fontFamily: "Poppins")),
             leading: const Icon(Icons.info),
             onTap: () {
-              // Update the state of the app.
-              // ...
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const About()),
+              );
             },
           ),
           ListTile(
@@ -90,8 +95,7 @@ class _DrawerComponentState extends State<DrawerComponent> {
                 const Text('Keluar', style: TextStyle(fontFamily: "Poppins")),
             leading: const Icon(Icons.exit_to_app),
             onTap: () {
-              // Update the state of the app.
-              // ...
+              SystemNavigator.pop();
             },
           ),
         ],

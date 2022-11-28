@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:polije_complaint_information_system_mobile/pages/auth/recovery.dart';
-import 'package:polije_complaint_information_system_mobile/pages/auth/register.dart';
-import 'package:polije_complaint_information_system_mobile/pages/landing.dart';
+// import 'package:shared_preferences/shared_preferences.dart';
+// import 'package:http/http.dart' as http;
+import 'package:elapor_polije/pages/auth/recovery.dart';
+import 'package:elapor_polije/pages/auth/register.dart';
+import 'package:elapor_polije/pages/landing.dart';
 
 class Login extends StatefulWidget {
   const Login({Key? key}) : super(key: key);
@@ -31,7 +33,7 @@ class _LoginState extends State<Login> {
                 const SizedBox(height: 100),
                 const Center(
                   child: Text(
-                    "Login",
+                    "Masuk",
                     style: TextStyle(
                         fontSize: 45,
                         color: Colors.white,
@@ -138,9 +140,10 @@ class _LoginState extends State<Login> {
                                         borderRadius: BorderRadius.circular(8),
                                       ),
                                     ),
-                                    onPressed: () {
+                                    onPressed: () async {
                                       try {
-                                        if (_loginSubmit(_emailController.text,
+                                        if (await _loginSubmit(
+                                            _emailController.text,
                                             _passwordController.text)) {
                                           Navigator.push(
                                             context,
@@ -198,7 +201,7 @@ class _LoginState extends State<Login> {
                                         width: 5,
                                       ),
                                       Text(
-                                        'Register',
+                                        'Daftar',
                                         style: TextStyle(
                                             color:
                                                 Color.fromRGBO(15, 76, 117, 1),
@@ -218,7 +221,9 @@ class _LoginState extends State<Login> {
   }
 }
 
-_loginSubmit(String email, String password) {
+Future<bool> _loginSubmit(String email, String password) async {
+  // Obtain shared preferences.
+  // final prefs = await SharedPreferences.getInstance();
   // print(email);
   // print(password);
   return true;

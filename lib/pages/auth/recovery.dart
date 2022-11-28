@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:polije_complaint_information_system_mobile/pages/auth/login.dart';
-import 'package:polije_complaint_information_system_mobile/pages/auth/register.dart';
+import 'package:elapor_polije/pages/auth/login.dart';
+import 'package:elapor_polije/pages/auth/register.dart';
 
 class Recovery extends StatefulWidget {
   const Recovery({Key? key}) : super(key: key);
@@ -152,7 +152,7 @@ class _RecoveryState extends State<Recovery> {
                                         width: 5,
                                       ),
                                       Text(
-                                        'Register',
+                                        'Daftar',
                                         style: TextStyle(
                                             color:
                                                 Color.fromRGBO(15, 76, 117, 1),

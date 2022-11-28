@@ -1,7 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:polije_complaint_information_system_mobile/pages/auth/login.dart';
+import 'package:elapor_polije/pages/auth/login.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({Key? key}) : super(key: key);
@@ -35,13 +35,15 @@ class _SplashScreenState extends State<SplashScreen> {
                 fit: BoxFit.cover)),
         child: Center(
           child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisSize: MainAxisSize.max,
+            mainAxisAlignment: MainAxisAlignment.end,
             children: <Widget>[
               Image.asset(
                 "assets/images/logo-politeknik-negeri-jember.png",
                 width: 100,
               ),
+              const SizedBox(height: 20),
               const Text(
                 "Layanan Aspirasi dan Pengaduan Online",
                 style: TextStyle(
@@ -58,7 +60,8 @@ class _SplashScreenState extends State<SplashScreen> {
                     fontWeight: FontWeight.w100,
                     color: Colors.white,
                     fontFamily: "Poppins"),
-              )
+              ),
+              const SizedBox(height: 50)
             ],
           ),
         ),

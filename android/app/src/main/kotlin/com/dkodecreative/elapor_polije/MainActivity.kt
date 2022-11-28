@@ -1,4 +1,4 @@
-package com.example.polije_complaint_information_system_mobile
+package com.dkodecreative.elapor_polije
 
 import io.flutter.embedding.android.FlutterActivity
 

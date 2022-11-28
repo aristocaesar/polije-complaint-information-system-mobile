@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'dart:async';
 import 'package:dropdown_button2/dropdown_button2.dart';
-import 'package:polije_complaint_information_system_mobile/pages/auth/login.dart';
+import 'package:elapor_polije/pages/auth/login.dart';
 
 class Register extends StatefulWidget {
   const Register({Key? key}) : super(key: key);
@@ -56,7 +56,7 @@ class _RegisterState extends State<Register> {
                 const SizedBox(height: 100),
                 const Center(
                   child: Text(
-                    "Register",
+                    "Daftar",
                     style: TextStyle(
                         fontSize: 45,
                         color: Colors.white,
@@ -355,7 +355,7 @@ class _RegisterState extends State<Register> {
                                       }
                                     },
                                     child: const Text(
-                                      "Register",
+                                      "Daftar",
                                       style: TextStyle(
                                           color: Color(0xffffffff),
                                           fontSize: 18,
