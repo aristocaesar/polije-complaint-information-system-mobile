@@ -47,19 +47,19 @@ class _LandingState extends State<Landing> {
                                   context,
                                   Icons.chat_bubble_outline,
                                   "Pengaduan",
-                                  "Tanyakan informasi mengenai kampus",
+                                  "Laporkan sebuah informasi",
                                   const Pengaduan()),
                               _buildItemKlasifikasi(
                                   context,
                                   Icons.send,
                                   "Aspirasi",
-                                  "Tanyakan informasi mengenai kampus",
+                                  "Kirimkan suara aspirasimu",
                                   const Aspirasi()),
                               _buildItemKlasifikasi(
                                   context,
                                   Icons.info,
                                   "Informasi",
-                                  "Tanyakan informasi mengenai kampus",
+                                  "Dapatkan informasi kampus",
                                   const Informasi())
                             ],
                           )),

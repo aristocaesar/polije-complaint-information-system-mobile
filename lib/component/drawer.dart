@@ -1,3 +1,4 @@
+import 'package:elapor_polije/pages/menus/laporan.dart';
 import 'package:elapor_polije/pages/menus/setting.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -24,8 +25,8 @@ class _DrawerComponentState extends State<DrawerComponent> {
             ),
             currentAccountPicture: CircleAvatar(
               child: ClipOval(
-                child: Image.asset(
-                  'assets/images/USER-default.png',
+                child: Image.network(
+                  'https://demo.getstisla.com/assets/img/avatar/avatar-1.png',
                   fit: BoxFit.cover,
                 ),
               ),
@@ -67,8 +68,10 @@ class _DrawerComponentState extends State<DrawerComponent> {
             ),
             leading: const Icon(Icons.archive),
             onTap: () {
-              // Update the state of the app.
-              // ...
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const Laporan()),
+              );
             },
           ),
           ListTile(

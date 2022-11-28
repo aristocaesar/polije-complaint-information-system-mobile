@@ -65,6 +65,7 @@ class _InformasiState extends State<Informasi> {
                                 top: 20.0, right: 20.0, left: 20.0),
                             child: ListView(
                               children: [
+                                // Judul
                                 const Text(
                                   "Judul",
                                   style: TextStyle(
@@ -86,6 +87,7 @@ class _InformasiState extends State<Informasi> {
                                 const SizedBox(
                                   height: 30,
                                 ),
+                                // Deskripsi
                                 const Text(
                                   "Deskripsi",
                                   style: TextStyle(
@@ -108,6 +110,7 @@ class _InformasiState extends State<Informasi> {
                                 const SizedBox(
                                   height: 30,
                                 ),
+                                // Katgeori
                                 const Text(
                                   "Kategori",
                                   style: TextStyle(
@@ -259,7 +262,7 @@ class _InformasiState extends State<Informasi> {
                                           style:
                                               const TextStyle(fontSize: 16.0)),
                                     ),
-                                    const SizedBox(width: 5),
+                                    const SizedBox(width: 15),
                                     ElevatedButton.icon(
                                       icon: const Icon(
                                         Icons.upload_file,
@@ -285,7 +288,7 @@ class _InformasiState extends State<Informasi> {
                                   ],
                                 ),
                                 const SizedBox(
-                                  height: 30,
+                                  height: 50,
                                 ),
                                 SizedBox(
                                   width: 200,
@@ -324,6 +327,9 @@ class _InformasiState extends State<Informasi> {
                                           fontWeight: FontWeight.bold),
                                     ),
                                   ),
+                                ),
+                                const SizedBox(
+                                  height: 80,
                                 ),
                               ],
                             )),

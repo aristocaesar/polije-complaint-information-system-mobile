@@ -26,7 +26,6 @@ class _AboutState extends State<About> {
             child: Column(
               children: <Widget>[
                 HeroComponent(title: "Tentang", drawer: _scaffoldKey),
-                const SizedBox(height: 100),
                 Expanded(
                   child: Container(
                     decoration: const BoxDecoration(
@@ -50,12 +49,21 @@ class _AboutState extends State<About> {
                               ),
                               SizedBox(height: 30),
                               Text(
-                                "Untuk itu Politeknik Negeri Jember membentuk Sistem Pengelolaan Pengaduan Pelayanan Kampus - Layanan Aspirasi dan Pengaduan Online adalah layanan penyampaian semua aspirasi dan pengaduan masyrakat Politeknik Negeri Jember melalui beberapa kanal pengaduan yaitu website www.lapor.polije.ac.id serta aplikasi mobile (Android).",
+                                "Untuk itu Politeknik Negeri Jember membentuk Sistem Pengelolaan Pengaduan Pelayanan Kampus - Layanan Aspirasi dan Pengaduan Online adalah layanan penyampaian semua aspirasi dan pengaduan masyrakat Politeknik Negeri Jember melalui beberapa kanal pengaduan yaitu website www.lapor.polije.ac.id serta aplikasi mobile E-Lapor Polije (Android).",
                                 style: TextStyle(
                                   fontFamily: "Poppins",
                                   fontSize: 20,
                                 ),
                               ),
+                              SizedBox(height: 30),
+                              Text(
+                                "E-Lapor Politeknik Negeri Jember v1.0.0 | Aplikasi ini dikembangkan oleh DKODE Creative.",
+                                style: TextStyle(
+                                  fontFamily: "Poppins",
+                                  fontSize: 15,
+                                ),
+                              ),
+                              SizedBox(height: 60),
                             ],
                           )),
                     ),
