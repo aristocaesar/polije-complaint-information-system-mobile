@@ -46,6 +46,7 @@ class _SplashScreenState extends State<SplashScreen> {
               const SizedBox(height: 20),
               const Text(
                 "Layanan Aspirasi dan Pengaduan Online",
+                textAlign: TextAlign.center,
                 style: TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
