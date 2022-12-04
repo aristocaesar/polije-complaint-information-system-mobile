@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 import 'package:elapor_polije/pages/auth/recovery.dart';
@@ -228,9 +229,8 @@ Future<bool> _loginSubmit(String email, String password) async {
   var data = <String, dynamic>{};
   data["email"] = (email.isNotEmpty) ? email : "email";
   data["password"] = (password.isNotEmpty) ? password : "password";
-  var response = await http.post(
-      Uri.parse("http://192.168.1.16/polije-complaint/api/login"),
-      body: data);
+  var response =
+      await http.post(Uri.parse("${dotenv.env['API_HOST']}/login"), body: data);
   var result = json.decode(response.body);
   if (result["status"] != "ERR") {
     var user = result["data"];

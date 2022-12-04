@@ -15,7 +15,7 @@ import 'package:elapor_polije/component/splash_screen.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 void main() async {
-  await dotenv.load(fileName: ".env");
+  await dotenv.load(fileName: "assets/.env");
   runApp(const MyApp());
 }
 
@@ -24,7 +24,6 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // print(dotenv.env['API_URL']);
     return MaterialApp(
       title: 'Polije Complaint Information System',
       debugShowCheckedModeBanner: false,
