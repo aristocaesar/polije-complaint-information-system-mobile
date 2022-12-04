@@ -111,40 +111,10 @@ class _ChangePasswordState extends State<ChangePassword> {
                                     fontSize: 18),
                               ),
                               const SizedBox(height: 10),
-                              Column(
-                                children: <Widget>[
-                                  Row(
-                                    children: [
-                                      Container(
-                                          height: 5,
-                                          width: 5,
-                                          decoration: BoxDecoration(
-                                              color: Colors.black,
-                                              borderRadius:
-                                                  BorderRadius.circular(20))),
-                                      const SizedBox(width: 5),
-                                      const Text(
-                                        'Setelah anda mengklik konfirmasi, anda ',
-                                      ),
-                                    ],
-                                  ),
-                                  Row(
-                                    children: [
-                                      Container(
-                                          height: 5,
-                                          width: 5,
-                                          decoration: BoxDecoration(
-                                              color: Colors.white,
-                                              borderRadius:
-                                                  BorderRadius.circular(20))),
-                                      const SizedBox(width: 5),
-                                      const Text(
-                                        'akan otomatis keluar.',
-                                      ),
-                                    ],
-                                  ),
-                                ],
-                              ),
+                              const Text(
+                                  "Setelah anda mengklik simpan, anda akan otomatis keluar.",
+                                  style: TextStyle(
+                                      fontFamily: 'Poppins', fontSize: 16)),
                               const SizedBox(height: 30),
                               SizedBox(
                                 width: 200,
@@ -159,7 +129,7 @@ class _ChangePasswordState extends State<ChangePassword> {
                                   ),
                                   onPressed: () async {
                                     try {
-                                      if (await _SubmitPassword(
+                                      if (await _submitChangePassword(
                                         _passwordController.text,
                                         _konfirmasiPasswordController.text,
                                         _oldPasswordController.text,
@@ -181,6 +151,9 @@ class _ChangePasswordState extends State<ChangePassword> {
                                   ),
                                 ),
                               ),
+                              const SizedBox(
+                                height: 80,
+                              ),
                             ],
                           )),
                     ),
@@ -191,7 +164,7 @@ class _ChangePasswordState extends State<ChangePassword> {
   }
 }
 
-Future<bool> _SubmitPassword(
+Future<bool> _submitChangePassword(
     String email, String password, String konfirmasipassword) async {
   // Obtain shared preferences.
   // final prefs = await SharedPreferences.getInstance();

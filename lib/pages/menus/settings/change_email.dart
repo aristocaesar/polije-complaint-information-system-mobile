@@ -111,53 +111,14 @@ class _ChangeEmailState extends State<ChangeEmail> {
                                     fontSize: 18),
                               ),
                               const SizedBox(height: 10),
-                              Column(
-                                children: <Widget>[
-                                  Row(
-                                    children: [
-                                      Container(
-                                          height: 5,
-                                          width: 5,
-                                          decoration: BoxDecoration(
-                                              color: Colors.black,
-                                              borderRadius:
-                                                  BorderRadius.circular(20))),
-                                      const SizedBox(width: 5),
-                                      const Text('Email Harus Aktif'),
-                                    ],
-                                  ),
-                                  Row(
-                                    children: [
-                                      Container(
-                                          height: 5,
-                                          width: 5,
-                                          decoration: BoxDecoration(
-                                              color: Colors.black,
-                                              borderRadius:
-                                                  BorderRadius.circular(20))),
-                                      const SizedBox(width: 5),
-                                      const Text(
-                                        'Jika link tidak tersedia, harap cek pada',
-                                      ),
-                                    ],
-                                  ),
-                                  Row(
-                                    children: [
-                                      Container(
-                                          height: 5,
-                                          width: 5,
-                                          decoration: BoxDecoration(
-                                              color: Colors.white,
-                                              borderRadius:
-                                                  BorderRadius.circular(20))),
-                                      const SizedBox(width: 5),
-                                      const Text(
-                                        'bagian spam.',
-                                      ),
-                                    ],
-                                  ),
-                                ],
-                              ),
+                              const Text("• Email Harus Akif",
+                                  style: TextStyle(
+                                      fontFamily: 'Poppins', fontSize: 16)),
+                              const SizedBox(height: 10),
+                              const Text(
+                                  "• Email Harus Akif Jika link verifikasi tidak tersedia, harap cek pada bagian spam.",
+                                  style: TextStyle(
+                                      fontFamily: 'Poppins', fontSize: 16)),
                               const SizedBox(height: 30),
                               SizedBox(
                                 width: 200,
@@ -172,14 +133,21 @@ class _ChangeEmailState extends State<ChangeEmail> {
                                   ),
                                   onPressed: () async {
                                     try {
-                                      if (await _SubmitEmail(
+                                      if (await _submitChangeEmail(
                                           _emailController.text,
                                           _konfirmasiEmailController.text,
-                                          _passwordController.text)) {}
+                                          _passwordController.text)) {
+                                        // ignore: use_build_context_synchronously
+                                        ScaffoldMessenger.of(context)
+                                            .showSnackBar(const SnackBar(
+                                          content: Text(
+                                              "Berhasil memperbarui email"),
+                                        ));
+                                      }
                                     } catch (e) {
                                       ScaffoldMessenger.of(context)
-                                          .showSnackBar(const SnackBar(
-                                        content: Text('email telah terganti'),
+                                          .showSnackBar(SnackBar(
+                                        content: Text(e.toString()),
                                       ));
                                     }
                                   },
@@ -193,6 +161,9 @@ class _ChangeEmailState extends State<ChangeEmail> {
                                   ),
                                 ),
                               ),
+                              const SizedBox(
+                                height: 80,
+                              ),
                             ],
                           )),
                     ),
@@ -203,7 +174,7 @@ class _ChangeEmailState extends State<ChangeEmail> {
   }
 }
 
-Future<bool> _SubmitEmail(
+Future<bool> _submitChangeEmail(
     String email, String password, String konfirmasipassword) async {
   // Obtain shared preferences.
   // final prefs = await SharedPreferences.getInstance();

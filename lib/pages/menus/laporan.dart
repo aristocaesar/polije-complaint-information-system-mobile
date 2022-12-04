@@ -17,11 +17,6 @@ class _LaporanState extends State<Laporan> {
   final List<String> jenisLaporan = ['Pengaduan', 'Aspirasi', 'Informasi'];
   String? jenisLaporanSelected;
 
-  // get judul => judul.text;
-  // get deskripsiPengaduan => deskripsiPengaduan.text;
-  // get dateinput => dateinput.text;
-  // get status => status.text;
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -51,14 +46,14 @@ class _LaporanState extends State<Laporan> {
                           child: ListView(
                             children: [
                               const Text(
-                                'Klarifikasi',
+                                'Klasifikasi',
                                 textAlign: TextAlign.center,
                                 style: TextStyle(
                                     fontWeight: FontWeight.bold,
                                     fontFamily: 'Poppins',
-                                    fontSize: 15),
+                                    fontSize: 18),
                               ),
-                              const SizedBox(height: 10),
+                              const SizedBox(height: 20),
                               DropdownButtonFormField2(
                                 decoration: InputDecoration(
                                   isDense: true,
@@ -69,7 +64,7 @@ class _LaporanState extends State<Laporan> {
                                 ),
                                 isExpanded: true,
                                 hint: const Text(
-                                  'Pilih Jenis Pengaduan',
+                                  'Pilih Klasifikasi',
                                   style: TextStyle(fontSize: 14),
                                 ),
                                 icon: const Icon(
@@ -100,33 +95,16 @@ class _LaporanState extends State<Laporan> {
                               ),
                               const SizedBox(height: 30),
                               Container(
-                                  height: 250,
                                   decoration: BoxDecoration(
                                       border: Border.all(
                                           width: 1, color: Colors.grey),
                                       borderRadius: BorderRadius.circular(6)),
                                   child: Padding(
-                                    padding: const EdgeInsets.only(
-                                        top: 10.0, right: 20.0, left: 20.0),
+                                    padding: const EdgeInsets.all(0),
                                     child: Column(
                                       crossAxisAlignment:
                                           CrossAxisAlignment.start,
                                       children: [
-                                        const Text('Judul Laporan.......'),
-                                        Container(
-                                          height: 150,
-                                          child: Column(
-                                            children: <Widget>[
-                                              // GetLaporan(
-                                              //     judul: judul,
-                                              //     deskripsiPengaduan:
-                                              //         deskripsiPengaduan,
-                                              //     dateinput: dateinput,
-                                              //     status: status)
-                                            ],
-                                          ),
-                                        ),
-                                        const SizedBox(height: 20),
                                         SizedBox(
                                           width: 300,
                                           height: 40,
@@ -145,7 +123,8 @@ class _LaporanState extends State<Laporan> {
                                                 context,
                                                 MaterialPageRoute(
                                                     builder: (context) =>
-                                                        const DetailLaporan()),
+                                                        const DetailLaporan(
+                                                            id: "ADU1992112335")),
                                               );
                                             },
                                             child: const Text(
@@ -161,16 +140,6 @@ class _LaporanState extends State<Laporan> {
                                       ],
                                     ),
                                   )),
-                              const SizedBox(height: 30),
-                              Container(
-                                height: 40,
-                                decoration: BoxDecoration(
-                                    border: Border.all(
-                                        width: 1, color: Colors.grey),
-                                    borderRadius: BorderRadius.circular(6)),
-                                padding: const EdgeInsets.all(10),
-                                child: const Text('Judul Laporan....'),
-                              )
                             ],
                           )),
                     ),
@@ -178,35 +147,5 @@ class _LaporanState extends State<Laporan> {
                 ),
               ],
             )));
-  }
-}
-
-// rencana mau bikin buat ngambil data dari detail laporan buat di tampilin ke laporan
-// tapi belum nemu cara
-
-// getLaporan(judul,deskripsiPengaduan,dateinput,status){
-//   print(judul);
-//   print(deskripsiPengaduan);
-//   print(dateinput);
-//   print(status);
-// }
-
-class GetLaporan extends StatelessWidget {
-  String judul, deskripsiPengaduan, dateinput, status;
-  GetLaporan(
-      {required this.judul,
-      required this.deskripsiPengaduan,
-      required this.dateinput,
-      required this.status});
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Text('${judul}'),
-        Text('${deskripsiPengaduan}'),
-        Text('${dateinput}'),
-        Text('${status}')
-      ],
-    );
   }
 }

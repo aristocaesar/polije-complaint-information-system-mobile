@@ -6,10 +6,10 @@ import 'package:elapor_polije/pages/menus/laporan.dart';
 import 'package:flutter/material.dart';
 import 'package:elapor_polije/component/hero_main.dart';
 import 'package:elapor_polije/component/drawer.dart';
-import 'package:intl/intl.dart';
 
 class DetailLaporan extends StatefulWidget {
-  const DetailLaporan({Key? key}) : super(key: key);
+  final String id;
+  const DetailLaporan({Key? key, required this.id}) : super(key: key);
 
   @override
   State<DetailLaporan> createState() => _DetailLaporanState();
@@ -17,8 +17,6 @@ class DetailLaporan extends StatefulWidget {
 
 class _DetailLaporanState extends State<DetailLaporan> {
   final _scaffoldKey = GlobalKey<ScaffoldState>();
-  // //form state
-  // final _formKey = GlobalKey<FormState>();
   //form state
   final TextEditingController judul = TextEditingController();
   final TextEditingController deskripsiPengaduan = TextEditingController();
@@ -57,7 +55,7 @@ class _DetailLaporanState extends State<DetailLaporan> {
             ),
             child: Column(
               children: <Widget>[
-                HeroComponent(title: "Detail Laporan", drawer: _scaffoldKey),
+                HeroComponent(title: widget.id, drawer: _scaffoldKey),
                 Expanded(
                   child: Container(
                     decoration: const BoxDecoration(
@@ -249,46 +247,14 @@ class _DetailLaporanState extends State<DetailLaporan> {
                               const SizedBox(
                                 height: 10,
                               ),
-                              Container(
-                                padding:
-                                    const EdgeInsets.only(top: 20, left: 30),
-                                height: 60,
-                                decoration: BoxDecoration(
-                                    border: Border.all(
-                                        width: 1, color: Colors.grey),
-                                    borderRadius: BorderRadius.circular(6)),
-                                child: Text(
-                                  DateFormat('yyyy-MM-dd KK:mm:ss a')
-                                      .format(DateTime.now()),
-                                  style: const TextStyle(
-                                      fontSize: 17, color: Colors.grey),
+                              TextFormField(
+                                controller: status,
+                                decoration: InputDecoration(
+                                  hintText: "16:35:05 04-Desember-2022",
+                                  border: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(5.0)),
                                 ),
                               ),
-                              // TextField(
-                              //   controller: dateinput,
-                              //   decoration: InputDecoration(
-                              //     border: OutlineInputBorder(
-                              //         borderRadius: BorderRadius.circular(5.0)),
-                              //   ),
-                              //   readOnly: true,
-                              //   onTap: () async {
-                              //     DateTime? pickedDate = await showDatePicker(
-                              //         context: context,
-                              //         initialDate: DateTime.now(),
-                              //         firstDate: DateTime(2000, 1, 2, 0, 0, 0),
-                              //         lastDate: DateTime(2101, 1, 2, 0, 0, 0));
-
-                              //     if (pickedDate != null) {
-                              //       String formattedDate =
-                              //           DateFormat('dd-MM-yyyy KK:mm:ss')
-                              //               .format(pickedDate);
-                              //       setState(() {
-                              //         dateinput.text =
-                              //             formattedDate; //set output date to TextField value.
-                              //       });
-                              //     }
-                              //   },
-                              // ),
                               const SizedBox(
                                 height: 30,
                               ),
@@ -370,19 +336,12 @@ class _DetailLaporanState extends State<DetailLaporan> {
                                           status.text,
                                           dateinput.text,
                                           deskripsiTanggapan.text)) {
-                                        ScaffoldMessenger.of(context)
-                                            .showSnackBar(const SnackBar(
-                                          content:
-                                              Text('Kembali ke menu laporan'),
-                                        ));
-                                        Timer(
-                                            const Duration(seconds: 1),
-                                            () => Navigator.push(
-                                                  context,
-                                                  MaterialPageRoute(
-                                                      builder: (context) =>
-                                                          const Laporan()),
-                                                ));
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (context) =>
+                                                  const Laporan()),
+                                        );
                                       }
                                     },
                                     child: const Icon(

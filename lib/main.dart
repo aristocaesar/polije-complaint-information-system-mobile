@@ -12,7 +12,7 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    print(dotenv.env['API_URL']);
+    // print(dotenv.env['API_URL']);
     return const MaterialApp(
       title: 'Polije Complaint Information System',
       debugShowCheckedModeBanner: false,

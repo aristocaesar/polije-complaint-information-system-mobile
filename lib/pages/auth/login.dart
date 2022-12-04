@@ -145,6 +145,7 @@ class _LoginState extends State<Login> {
                                         if (await _loginSubmit(
                                             _emailController.text,
                                             _passwordController.text)) {
+                                          // ignore: use_build_context_synchronously
                                           Navigator.push(
                                             context,
                                             MaterialPageRoute(
