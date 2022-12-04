@@ -292,7 +292,7 @@ class _PengaduanState extends State<Pengaduan> {
                                   ),
                                   onPressed: () {
                                     try {
-                                      if (_sendInformasi()) {
+                                      if (_sendPengaduan()) {
                                         ScaffoldMessenger.of(context)
                                             .showSnackBar(const SnackBar(
                                           content: Text(
@@ -348,6 +348,6 @@ selectFile() async {
 }
 
 // send informasi
-_sendInformasi() {
+_sendPengaduan() {
   return true;
 }
