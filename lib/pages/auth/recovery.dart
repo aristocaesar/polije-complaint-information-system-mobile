@@ -1,6 +1,11 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:elapor_polije/pages/auth/login.dart';
 import 'package:elapor_polije/pages/auth/register.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 
 class Recovery extends StatefulWidget {
   static const nameRoute = "/recovery";
@@ -88,15 +93,22 @@ class _RecoveryState extends State<Recovery> {
                                         borderRadius: BorderRadius.circular(8),
                                       ),
                                     ),
-                                    onPressed: () {
+                                    onPressed: () async {
                                       try {
-                                        if (_recoverySubmit(
+                                        ScaffoldMessenger.of(context)
+                                            .showSnackBar(const SnackBar(
+                                          content:
+                                              Text("Mohon tunggu sebentar"),
+                                        ));
+                                        if (await _recoverySubmit(
                                             _emailController.text)) {
+                                          // ignore: use_build_context_synchronously
                                           ScaffoldMessenger.of(context)
                                               .showSnackBar(const SnackBar(
                                             content: Text(
                                                 "Tautan berhasil dikirimkan, silakan cek email!"),
                                           ));
+                                          // ignore: use_build_context_synchronously
                                           Navigator.of(context)
                                               .pushNamed(Login.nameRoute);
                                         }
@@ -165,8 +177,15 @@ class _RecoveryState extends State<Recovery> {
   }
 }
 
-_recoverySubmit(String email) {
-  // print(email);
-  // print(password);
-  return true;
+Future<bool> _recoverySubmit(String email) async {
+  var data = <String, dynamic>{};
+  data["email"] = (email.isNotEmpty) ? email : "email";
+  var response = await http
+      .post(Uri.parse("${dotenv.env['API_HOST']}/recovery"), body: data);
+  var result = json.decode(response.body);
+  if (result["status"] != "ERR") {
+    return true;
+  } else {
+    throw result["data"]["message"];
+  }
 }
