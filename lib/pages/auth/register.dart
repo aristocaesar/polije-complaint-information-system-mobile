@@ -5,6 +5,7 @@ import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:elapor_polije/pages/auth/login.dart';
 
 class Register extends StatefulWidget {
+  static const nameRoute = "/register";
   const Register({Key? key}) : super(key: key);
 
   @override
@@ -342,16 +343,12 @@ class _RegisterState extends State<Register> {
                                         ScaffoldMessenger.of(context)
                                             .showSnackBar(const SnackBar(
                                           content: Text(
-                                              'Berhasil Registrasi, Silakan Login'),
+                                              'Berhasil Registrasi, Silakan Verifikasi dan Login'),
                                         ));
                                         Timer(
                                             const Duration(seconds: 2),
-                                            () => Navigator.push(
-                                                  context,
-                                                  MaterialPageRoute(
-                                                      builder: (context) =>
-                                                          const Login()),
-                                                ));
+                                            () => Navigator.of(context)
+                                                .pushNamed(Login.nameRoute));
                                       }
                                     },
                                     child: const Text(
@@ -369,11 +366,8 @@ class _RegisterState extends State<Register> {
                                 ),
                                 TextButton(
                                   onPressed: () {
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                          builder: (context) => const Login()),
-                                    );
+                                    Navigator.of(context)
+                                        .pushNamed(Login.nameRoute);
                                   },
                                   style: ButtonStyle(
                                     alignment: Alignment.centerLeft,

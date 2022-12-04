@@ -3,6 +3,7 @@ import 'package:elapor_polije/component/hero_main.dart';
 import 'package:elapor_polije/component/drawer.dart';
 
 class About extends StatefulWidget {
+  static const nameRoute = "/about";
   const About({Key? key}) : super(key: key);
 
   @override

@@ -6,6 +6,7 @@ import 'package:elapor_polije/pages/menus/informasi.dart';
 import 'package:elapor_polije/pages/menus/pengaduan.dart';
 
 class Landing extends StatefulWidget {
+  static const nameRoute = "/landing";
   const Landing({Key? key}) : super(key: key);
 
   @override
@@ -48,19 +49,19 @@ class _LandingState extends State<Landing> {
                                   Icons.chat_bubble_outline,
                                   "Pengaduan",
                                   "Laporkan sebuah informasi",
-                                  const Pengaduan()),
+                                  Pengaduan.nameRoute),
                               _buildItemKlasifikasi(
                                   context,
                                   Icons.send,
                                   "Aspirasi",
                                   "Kirimkan suara aspirasimu",
-                                  const Aspirasi()),
+                                  Aspirasi.nameRoute),
                               _buildItemKlasifikasi(
                                   context,
                                   Icons.info,
                                   "Informasi",
                                   "Dapatkan informasi kampus",
-                                  const Informasi())
+                                  Informasi.nameRoute)
                             ],
                           )),
                     ),
@@ -72,15 +73,12 @@ class _LandingState extends State<Landing> {
 }
 
 Widget _buildItemKlasifikasi(BuildContext ctx, IconData icon, String title,
-    String description, Widget push) {
+    String description, String push) {
   return Column(
     children: [
       GestureDetector(
         onTap: () {
-          Navigator.push(
-            ctx,
-            MaterialPageRoute(builder: (context) => push),
-          );
+          Navigator.of(ctx).pushNamed(push);
         },
         child: Card(
             elevation: 2,

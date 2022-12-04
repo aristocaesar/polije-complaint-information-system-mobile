@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:elapor_polije/pages/auth/login.dart';
 
 class SplashScreen extends StatefulWidget {
+  static const nameRoute = "/splashscreen";
   const SplashScreen({Key? key}) : super(key: key);
 
   @override
@@ -18,8 +19,7 @@ class _SplashScreenState extends State<SplashScreen> {
 
   splashScreenStart() async {
     return Timer(const Duration(seconds: 5), () {
-      Navigator.push(
-          context, MaterialPageRoute(builder: (context) => const Login()));
+      Navigator.of(context).pushNamed(Login.nameRoute);
     });
   }
 

@@ -3,6 +3,7 @@ import 'package:elapor_polije/component/hero_main.dart';
 import 'package:elapor_polije/component/drawer.dart';
 
 class ChangePassword extends StatefulWidget {
+  static const nameRoute = "/change_password";
   const ChangePassword({Key? key}) : super(key: key);
 
   @override
@@ -133,11 +134,20 @@ class _ChangePasswordState extends State<ChangePassword> {
                                         _passwordController.text,
                                         _konfirmasiPasswordController.text,
                                         _oldPasswordController.text,
-                                      )) {}
+                                      )) {
+                                        // ignore: use_build_context_synchronously
+                                        ScaffoldMessenger.of(context)
+                                            .showSnackBar(const SnackBar(
+                                          content: Text(
+                                              'Password berhasil diperbarui'),
+                                        ));
+                                        // ignore: use_build_context_synchronously
+                                        Navigator.pop(context);
+                                      }
                                     } catch (e) {
                                       ScaffoldMessenger.of(context)
-                                          .showSnackBar(const SnackBar(
-                                        content: Text('email telah terganti'),
+                                          .showSnackBar(SnackBar(
+                                        content: Text(e.toString()),
                                       ));
                                     }
                                   },

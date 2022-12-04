@@ -55,10 +55,7 @@ class _DrawerComponentState extends State<DrawerComponent> {
             ),
             leading: const Icon(Icons.layers),
             onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => const Landing()),
-              );
+              Navigator.of(context).pushNamed(Landing.nameRoute);
             },
           ),
           ListTile(
@@ -68,10 +65,7 @@ class _DrawerComponentState extends State<DrawerComponent> {
             ),
             leading: const Icon(Icons.archive),
             onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => const Laporan()),
-              );
+              Navigator.of(context).pushNamed(Laporan.nameRoute);
             },
           ),
           ListTile(
@@ -79,10 +73,7 @@ class _DrawerComponentState extends State<DrawerComponent> {
                 style: TextStyle(fontFamily: "Poppins")),
             leading: const Icon(Icons.settings),
             onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => const Setting()),
-              );
+              Navigator.of(context).pushNamed(Setting.nameRoute);
             },
           ),
           ListTile(
@@ -90,10 +81,7 @@ class _DrawerComponentState extends State<DrawerComponent> {
                 const Text('Tentang', style: TextStyle(fontFamily: "Poppins")),
             leading: const Icon(Icons.info),
             onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => const About()),
-              );
+              Navigator.of(context).pushNamed(About.nameRoute);
             },
           ),
           ListTile(

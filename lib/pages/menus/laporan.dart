@@ -6,6 +6,7 @@ import 'package:elapor_polije/component/drawer.dart';
 
 class Laporan extends StatefulWidget {
   const Laporan({Key? key}) : super(key: key);
+  static const nameRoute = "/laporan";
 
   @override
   State<Laporan> createState() => _LaporanState();

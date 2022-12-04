@@ -6,6 +6,7 @@ import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:file_picker/file_picker.dart';
 
 class Informasi extends StatefulWidget {
+  static const nameRoute = "/informasi";
   const Informasi({Key? key}) : super(key: key);
 
   @override

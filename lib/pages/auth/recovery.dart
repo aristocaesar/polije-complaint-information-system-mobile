@@ -3,6 +3,7 @@ import 'package:elapor_polije/pages/auth/login.dart';
 import 'package:elapor_polije/pages/auth/register.dart';
 
 class Recovery extends StatefulWidget {
+  static const nameRoute = "/recovery";
   const Recovery({Key? key}) : super(key: key);
 
   @override
@@ -96,12 +97,8 @@ class _RecoveryState extends State<Recovery> {
                                             content: Text(
                                                 "Tautan berhasil dikirimkan, silakan cek email!"),
                                           ));
-                                          Navigator.push(
-                                            context,
-                                            MaterialPageRoute(
-                                                builder: (context) =>
-                                                    const Login()),
-                                          );
+                                          Navigator.of(context)
+                                              .pushNamed(Login.nameRoute);
                                         }
                                       } catch (e) {
                                         ScaffoldMessenger.of(context)
@@ -125,12 +122,8 @@ class _RecoveryState extends State<Recovery> {
                                 ),
                                 TextButton(
                                   onPressed: () {
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                          builder: (context) =>
-                                              const Register()),
-                                    );
+                                    Navigator.of(context)
+                                        .pushNamed(Register.nameRoute);
                                   },
                                   style: ButtonStyle(
                                     alignment: Alignment.centerLeft,

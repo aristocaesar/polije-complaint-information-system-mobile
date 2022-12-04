@@ -7,6 +7,7 @@ import 'package:elapor_polije/pages/landing.dart';
 
 class Login extends StatefulWidget {
   const Login({Key? key}) : super(key: key);
+  static const nameRoute = "/login";
 
   @override
   State<Login> createState() => _LoginState();
@@ -104,12 +105,8 @@ class _LoginState extends State<Login> {
                                 ),
                                 TextButton(
                                   onPressed: () {
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                          builder: (context) =>
-                                              const Recovery()),
-                                    );
+                                    Navigator.of(context)
+                                        .pushNamed(Recovery.nameRoute);
                                   },
                                   style: ButtonStyle(
                                     alignment: Alignment.centerLeft,
@@ -146,12 +143,8 @@ class _LoginState extends State<Login> {
                                             _emailController.text,
                                             _passwordController.text)) {
                                           // ignore: use_build_context_synchronously
-                                          Navigator.push(
-                                            context,
-                                            MaterialPageRoute(
-                                                builder: (context) =>
-                                                    const Landing()),
-                                          );
+                                          Navigator.of(context)
+                                              .pushNamed(Landing.nameRoute);
                                         }
                                       } catch (e) {
                                         ScaffoldMessenger.of(context)
@@ -161,7 +154,7 @@ class _LoginState extends State<Login> {
                                       }
                                     },
                                     child: const Text(
-                                      "Login",
+                                      "Masuk",
                                       style: TextStyle(
                                           color: Color(0xffffffff),
                                           fontSize: 18,
@@ -175,12 +168,8 @@ class _LoginState extends State<Login> {
                                 ),
                                 TextButton(
                                   onPressed: () {
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                          builder: (context) =>
-                                              const Register()),
-                                    );
+                                    Navigator.of(context)
+                                        .pushNamed(Register.nameRoute);
                                   },
                                   style: ButtonStyle(
                                     alignment: Alignment.centerLeft,

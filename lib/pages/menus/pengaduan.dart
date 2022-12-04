@@ -5,6 +5,7 @@ import 'package:elapor_polije/component/hero_main.dart';
 import 'package:elapor_polije/component/drawer.dart';
 
 class Pengaduan extends StatefulWidget {
+  static const nameRoute = "/pengaduan";
   const Pengaduan({Key? key}) : super(key: key);
 
   @override

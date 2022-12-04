@@ -3,6 +3,7 @@ import 'package:elapor_polije/component/hero_main.dart';
 import 'package:elapor_polije/component/drawer.dart';
 
 class ChangeEmail extends StatefulWidget {
+  static const nameRoute = "/change_email";
   const ChangeEmail({Key? key}) : super(key: key);
 
   @override
@@ -143,6 +144,8 @@ class _ChangeEmailState extends State<ChangeEmail> {
                                           content: Text(
                                               "Berhasil memperbarui email"),
                                         ));
+                                        // ignore: use_build_context_synchronously
+                                        Navigator.pop(context);
                                       }
                                     } catch (e) {
                                       ScaffoldMessenger.of(context)

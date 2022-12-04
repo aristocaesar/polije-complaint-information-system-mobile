@@ -5,6 +5,7 @@ import 'package:elapor_polije/component/hero_main.dart';
 import 'package:elapor_polije/component/drawer.dart';
 
 class Aspirasi extends StatefulWidget {
+  static const nameRoute = "/aspirasi";
   const Aspirasi({Key? key}) : super(key: key);
 
   @override

@@ -11,6 +11,7 @@ import 'package:elapor_polije/pages/menus/settings/change_password.dart';
 import 'package:intl/intl.dart';
 
 class Setting extends StatefulWidget {
+  static const nameRoute = "/setting";
   const Setting({Key? key}) : super(key: key);
 
   @override
@@ -310,12 +311,8 @@ class _SettingState extends State<Setting> {
                               ),
                               TextButton(
                                 onPressed: () {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) =>
-                                            const ChangeEmail()),
-                                  );
+                                  Navigator.of(context)
+                                      .pushNamed(ChangeEmail.nameRoute);
                                 },
                                 style: ButtonStyle(
                                   alignment: Alignment.centerLeft,
@@ -346,12 +343,8 @@ class _SettingState extends State<Setting> {
                               ),
                               TextButton(
                                 onPressed: () {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) =>
-                                            const ChangePassword()),
-                                  );
+                                  Navigator.of(context)
+                                      .pushNamed(ChangePassword.nameRoute);
                                 },
                                 style: ButtonStyle(
                                   alignment: Alignment.centerLeft,
