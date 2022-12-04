@@ -11,6 +11,10 @@ class ChangeEmail extends StatefulWidget {
 
 class _ChangeEmailState extends State<ChangeEmail> {
   final _scaffoldKey = GlobalKey<ScaffoldState>();
+  // controller
+  final _emailController = TextEditingController();
+  final _konfirmasiEmailController = TextEditingController();
+  final _passwordController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -39,7 +43,157 @@ class _ChangeEmailState extends State<ChangeEmail> {
                           padding: const EdgeInsets.only(
                               top: 20.0, right: 20.0, left: 20.0),
                           child: ListView(
-                            children: const [],
+                            children: [
+                              const Text(
+                                "Email",
+                                style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontFamily: 'Poppins',
+                                    fontSize: 18),
+                              ),
+                              const SizedBox(
+                                height: 10,
+                              ),
+                              TextFormField(
+                                controller: _emailController,
+                                decoration: InputDecoration(
+                                  hintText: "Ketikkan Email",
+                                  border: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(5.0)),
+                                ),
+                              ),
+                              const SizedBox(
+                                height: 30,
+                              ),
+                              const Text(
+                                "Konfirmasi Email",
+                                style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontFamily: 'Poppins',
+                                    fontSize: 18),
+                              ),
+                              const SizedBox(
+                                height: 10,
+                              ),
+                              TextFormField(
+                                controller: _konfirmasiEmailController,
+                                decoration: InputDecoration(
+                                  hintText: "Ketik Ulang Email",
+                                  border: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(5.0)),
+                                ),
+                              ),
+                              const SizedBox(height: 30),
+                              const Text(
+                                "Password",
+                                style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontFamily: 'Poppins',
+                                    fontSize: 18),
+                              ),
+                              const SizedBox(
+                                height: 10,
+                              ),
+                              TextFormField(
+                                controller: _passwordController,
+                                decoration: InputDecoration(
+                                  hintText: "Ketikkan Password",
+                                  border: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(5.0)),
+                                ),
+                              ),
+                              const SizedBox(height: 30),
+                              const Text(
+                                'Perhatikan',
+                                style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontFamily: 'Poppins',
+                                    fontSize: 18),
+                              ),
+                              const SizedBox(height: 10),
+                              Column(
+                                children: <Widget>[
+                                  Row(
+                                    children: [
+                                      Container(
+                                          height: 5,
+                                          width: 5,
+                                          decoration: BoxDecoration(
+                                              color: Colors.black,
+                                              borderRadius:
+                                                  BorderRadius.circular(20))),
+                                      const SizedBox(width: 5),
+                                      const Text('Email Harus Aktif'),
+                                    ],
+                                  ),
+                                  Row(
+                                    children: [
+                                      Container(
+                                          height: 5,
+                                          width: 5,
+                                          decoration: BoxDecoration(
+                                              color: Colors.black,
+                                              borderRadius:
+                                                  BorderRadius.circular(20))),
+                                      const SizedBox(width: 5),
+                                      const Text(
+                                        'Jika link tidak tersedia, harap cek pada',
+                                      ),
+                                    ],
+                                  ),
+                                  Row(
+                                    children: [
+                                      Container(
+                                          height: 5,
+                                          width: 5,
+                                          decoration: BoxDecoration(
+                                              color: Colors.white,
+                                              borderRadius:
+                                                  BorderRadius.circular(20))),
+                                      const SizedBox(width: 5),
+                                      const Text(
+                                        'bagian spam.',
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              ),
+                              const SizedBox(height: 30),
+                              SizedBox(
+                                width: 200,
+                                height: 60,
+                                child: TextButton(
+                                  style: TextButton.styleFrom(
+                                    backgroundColor:
+                                        const Color.fromRGBO(15, 76, 117, 1),
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(8),
+                                    ),
+                                  ),
+                                  onPressed: () async {
+                                    try {
+                                      if (await _SubmitEmail(
+                                          _emailController.text,
+                                          _konfirmasiEmailController.text,
+                                          _passwordController.text)) {}
+                                    } catch (e) {
+                                      ScaffoldMessenger.of(context)
+                                          .showSnackBar(const SnackBar(
+                                        content: Text('email telah terganti'),
+                                      ));
+                                    }
+                                  },
+                                  child: const Text(
+                                    "Simpan",
+                                    style: TextStyle(
+                                        color: Color(0xffffffff),
+                                        fontSize: 18,
+                                        fontFamily: "Poppins",
+                                        fontWeight: FontWeight.bold),
+                                  ),
+                                ),
+                              ),
+                            ],
                           )),
                     ),
                   ),
@@ -47,4 +201,14 @@ class _ChangeEmailState extends State<ChangeEmail> {
               ],
             )));
   }
+}
+
+Future<bool> _SubmitEmail(
+    String email, String password, String konfirmasipassword) async {
+  // Obtain shared preferences.
+  // final prefs = await SharedPreferences.getInstance();
+  // print(email);
+  // print(konfirmasiEmail);
+  // print(password);
+  return true;
 }
