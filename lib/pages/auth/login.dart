@@ -1,6 +1,8 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
-// import 'package:shared_preferences/shared_preferences.dart';
-// import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:http/http.dart' as http;
 import 'package:elapor_polije/pages/auth/recovery.dart';
 import 'package:elapor_polije/pages/auth/register.dart';
 import 'package:elapor_polije/pages/landing.dart';
@@ -93,6 +95,9 @@ class _LoginState extends State<Login> {
                                 ),
                                 TextFormField(
                                   controller: _passwordController,
+                                  obscureText: true,
+                                  enableSuggestions: false,
+                                  autocorrect: false,
                                   decoration: InputDecoration(
                                     hintText: "Ketikkan Password",
                                     border: OutlineInputBorder(
@@ -142,6 +147,14 @@ class _LoginState extends State<Login> {
                                         if (await _loginSubmit(
                                             _emailController.text,
                                             _passwordController.text)) {
+                                          final prefs = await SharedPreferences
+                                              .getInstance();
+                                          final nama = prefs.get("nama");
+                                          // ignore: use_build_context_synchronously
+                                          ScaffoldMessenger.of(context)
+                                              .showSnackBar(SnackBar(
+                                            content: Text("Hallo, $nama"),
+                                          ));
                                           // ignore: use_build_context_synchronously
                                           Navigator.of(context)
                                               .pushNamed(Landing.nameRoute);
@@ -212,9 +225,22 @@ class _LoginState extends State<Login> {
 }
 
 Future<bool> _loginSubmit(String email, String password) async {
-  // Obtain shared preferences.
-  // final prefs = await SharedPreferences.getInstance();
-  // print(email);
-  // print(password);
-  return true;
+  var data = <String, dynamic>{};
+  data["email"] = (email.isNotEmpty) ? email : "email";
+  data["password"] = (password.isNotEmpty) ? password : "password";
+  var response = await http.post(
+      Uri.parse("http://192.168.1.16/polije-complaint/api/login"),
+      body: data);
+  var result = json.decode(response.body);
+  if (result["status"] != "ERR") {
+    var user = result["data"];
+    // init session
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString('id', user["id"]);
+    await prefs.setString('nama', user["nama"]);
+    await prefs.setString('email', user["email"]);
+    return true;
+  } else {
+    throw result["data"]["message"];
+  }
 }
