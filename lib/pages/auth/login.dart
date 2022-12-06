@@ -1,8 +1,9 @@
 import 'dart:convert';
-
 import 'package:elapor_polije/session/session.dart';
+import 'package:elapor_polije/session/user_state.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import 'package:elapor_polije/pages/auth/recovery.dart';
 import 'package:elapor_polije/pages/auth/register.dart';
@@ -17,6 +18,8 @@ class Login extends StatefulWidget {
 }
 
 class _LoginState extends State<Login> {
+  // global state
+  final userState = Get.put(UserStateController());
   // form state
   final _formKey = GlobalKey<FormState>();
 
@@ -25,11 +28,6 @@ class _LoginState extends State<Login> {
   final _passwordController = TextEditingController();
   @override
   Widget build(BuildContext context) {
-    // Session().get("id").then((value) {
-    //   Navigator.of(context).pop();
-    //   Navigator.of(context).pushReplacement(MaterialPageRoute(
-    //       builder: (BuildContext context) => const Landing()));
-    // });
     return Scaffold(
         body: Container(
             decoration: const BoxDecoration(
@@ -152,17 +150,17 @@ class _LoginState extends State<Login> {
                                       try {
                                         if (await _loginSubmit(
                                             _emailController.text,
-                                            _passwordController.text)) {
-                                          Session().get("nama").then((nama) {
-                                            // ignore: use_build_context_synchronously
-                                            Navigator.of(context)
-                                                .pushNamed(Landing.nameRoute);
-                                            // ignore: use_build_context_synchronously
-                                            ScaffoldMessenger.of(context)
-                                                .showSnackBar(SnackBar(
-                                              content: Text("Hallo, $nama"),
-                                            ));
-                                          });
+                                            _passwordController.text,
+                                            userState)) {
+                                          // ignore: use_build_context_synchronously
+                                          ScaffoldMessenger.of(context)
+                                              .showSnackBar(SnackBar(
+                                            content: Text(
+                                                "Hallo, ${userState.namaLengkap.toString()}"),
+                                          ));
+                                          // ignore: use_build_context_synchronously
+                                          Navigator.of(context)
+                                              .pushNamed(Landing.nameRoute);
                                         }
                                       } catch (e) {
                                         ScaffoldMessenger.of(context)
@@ -229,16 +227,22 @@ class _LoginState extends State<Login> {
   }
 }
 
-Future<bool> _loginSubmit(String email, String password) async {
+Future<bool> _loginSubmit(
+    String email, String password, UserStateController userState) async {
+  if (email.isEmpty || password.isEmpty) {
+    throw "Harap mengisi email dan password";
+  }
   var data = <String, dynamic>{};
-  data["email"] = (email.isNotEmpty) ? email : "email";
-  data["password"] = (password.isNotEmpty) ? password : "password";
+  data["email"] = email;
+  data["password"] = password;
   var response =
       await http.post(Uri.parse("${dotenv.env['API_HOST']}/login"), body: data);
   var result = json.decode(response.body);
   if (result["status"] != "ERR") {
     var user = result["data"];
     // init session
+    userState.setState(user["id"], user["nama"], user["email"],
+        "${dotenv.env['BASE_HOST']}/public/upload/assets/images/${user['foto']}");
     Session().setSession({
       "id": user["id"],
       "nama": user["nama"],
