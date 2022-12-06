@@ -1,8 +1,8 @@
 import 'dart:convert';
 
+import 'package:elapor_polije/session/session.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 import 'package:elapor_polije/pages/auth/recovery.dart';
 import 'package:elapor_polije/pages/auth/register.dart';
@@ -25,6 +25,11 @@ class _LoginState extends State<Login> {
   final _passwordController = TextEditingController();
   @override
   Widget build(BuildContext context) {
+    // Session().get("id").then((value) {
+    //   Navigator.of(context).pop();
+    //   Navigator.of(context).pushReplacement(MaterialPageRoute(
+    //       builder: (BuildContext context) => const Landing()));
+    // });
     return Scaffold(
         body: Container(
             decoration: const BoxDecoration(
@@ -148,17 +153,16 @@ class _LoginState extends State<Login> {
                                         if (await _loginSubmit(
                                             _emailController.text,
                                             _passwordController.text)) {
-                                          final prefs = await SharedPreferences
-                                              .getInstance();
-                                          final nama = prefs.get("nama");
-                                          // ignore: use_build_context_synchronously
-                                          ScaffoldMessenger.of(context)
-                                              .showSnackBar(SnackBar(
-                                            content: Text("Hallo, $nama"),
-                                          ));
-                                          // ignore: use_build_context_synchronously
-                                          Navigator.of(context)
-                                              .pushNamed(Landing.nameRoute);
+                                          Session().get("nama").then((nama) {
+                                            // ignore: use_build_context_synchronously
+                                            Navigator.of(context)
+                                                .pushNamed(Landing.nameRoute);
+                                            // ignore: use_build_context_synchronously
+                                            ScaffoldMessenger.of(context)
+                                                .showSnackBar(SnackBar(
+                                              content: Text("Hallo, $nama"),
+                                            ));
+                                          });
                                         }
                                       } catch (e) {
                                         ScaffoldMessenger.of(context)
@@ -235,10 +239,13 @@ Future<bool> _loginSubmit(String email, String password) async {
   if (result["status"] != "ERR") {
     var user = result["data"];
     // init session
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setString('id', user["id"]);
-    await prefs.setString('nama', user["nama"]);
-    await prefs.setString('email', user["email"]);
+    Session().setSession({
+      "id": user["id"],
+      "nama": user["nama"],
+      "email": user["email"],
+      "foto":
+          "${dotenv.env['BASE_HOST']}/public/upload/assets/images/${user['foto']}"
+    });
     return true;
   } else {
     throw result["data"]["message"];

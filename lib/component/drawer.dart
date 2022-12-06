@@ -1,9 +1,11 @@
 import 'package:elapor_polije/pages/menus/laporan.dart';
 import 'package:elapor_polije/pages/menus/setting.dart';
+import 'package:elapor_polije/session/session.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:elapor_polije/pages/landing.dart';
 import 'package:elapor_polije/pages/menus/about.dart';
+// import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 class DrawerComponent extends StatefulWidget {
   const DrawerComponent({Key? key}) : super(key: key);
@@ -13,8 +15,27 @@ class DrawerComponent extends StatefulWidget {
 }
 
 class _DrawerComponentState extends State<DrawerComponent> {
+  String nama = "";
+  String email = "";
+  String foto = "https://demo.getstisla.com/assets/img/avatar/avatar-1.png";
+
   @override
   Widget build(BuildContext context) {
+    Session().get("nama").then((value) {
+      setState(() {
+        nama = value;
+      });
+    });
+    Session().get("email").then((value) {
+      setState(() {
+        email = value;
+      });
+    });
+    Session().get("foto").then((value) {
+      setState(() {
+        foto = value;
+      });
+    });
     return Drawer(
       child: ListView(
         padding: EdgeInsets.zero,
@@ -26,22 +47,22 @@ class _DrawerComponentState extends State<DrawerComponent> {
             currentAccountPicture: CircleAvatar(
               child: ClipOval(
                 child: Image.network(
-                  'https://demo.getstisla.com/assets/img/avatar/avatar-1.png',
+                  foto,
                   fit: BoxFit.cover,
                 ),
               ),
             ),
-            accountName: const Text(
-              'Ferdy Sambo',
-              style: TextStyle(
+            accountName: Text(
+              nama,
+              style: const TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.bold,
                   color: Colors.white,
                   fontFamily: "Poppins"),
             ),
-            accountEmail: const Text(
-              'ferdysambo@kapolri.gov.id',
-              style: TextStyle(
+            accountEmail: Text(
+              email,
+              style: const TextStyle(
                   fontSize: 14,
                   fontWeight: FontWeight.w400,
                   color: Color.fromARGB(255, 203, 203, 203),
@@ -54,7 +75,7 @@ class _DrawerComponentState extends State<DrawerComponent> {
               style: TextStyle(fontFamily: "Poppins"),
             ),
             leading: const Icon(Icons.layers),
-            onTap: () {
+            onTap: () async {
               Navigator.of(context).pushNamed(Landing.nameRoute);
             },
           ),
@@ -88,7 +109,8 @@ class _DrawerComponentState extends State<DrawerComponent> {
             title:
                 const Text('Keluar', style: TextStyle(fontFamily: "Poppins")),
             leading: const Icon(Icons.exit_to_app),
-            onTap: () {
+            onTap: () async {
+              await Session().destroySession();
               SystemNavigator.pop();
             },
           ),
