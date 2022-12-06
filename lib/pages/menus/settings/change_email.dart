@@ -117,7 +117,7 @@ class _ChangeEmailState extends State<ChangeEmail> {
                                       fontFamily: 'Poppins', fontSize: 16)),
                               const SizedBox(height: 10),
                               const Text(
-                                  "• Email Harus Akif Jika link verifikasi tidak tersedia, harap cek pada bagian spam.",
+                                  "• Jika link verifikasi tidak tersedia, harap cek pada bagian spam.",
                                   style: TextStyle(
                                       fontFamily: 'Poppins', fontSize: 16)),
                               const SizedBox(height: 30),
@@ -179,10 +179,5 @@ class _ChangeEmailState extends State<ChangeEmail> {
 
 Future<bool> _submitChangeEmail(
     String email, String password, String konfirmasipassword) async {
-  // Obtain shared preferences.
-  // final prefs = await SharedPreferences.getInstance();
-  // print(email);
-  // print(konfirmasiEmail);
-  // print(password);
   return true;
 }

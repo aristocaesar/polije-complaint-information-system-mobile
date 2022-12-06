@@ -2,7 +2,6 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:dropdown_button2/dropdown_button2.dart';
-import 'package:elapor_polije/pages/landing.dart';
 import 'package:elapor_polije/session/user_state.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
@@ -40,7 +39,7 @@ class _SettingState extends State<Setting> {
 
   // status
   final List<String> statusItems = [
-    'Mahasiswa / Mahasiswi',
+    'Mahasiswa/Mahasiswi',
     'Dosen',
     'Staf',
     'Masyarakat',
@@ -53,12 +52,6 @@ class _SettingState extends State<Setting> {
     'Perempuan',
   ];
   String? jenisKelaminSelected;
-
-  @override
-  void initState() {
-    dateinput.text = "";
-    super.initState();
-  }
 
   Future getUser() async {
     // GET DATA USER WHERE ID
@@ -102,6 +95,10 @@ class _SettingState extends State<Setting> {
                               if (snapshot.hasData) {
                                 namaLengkapControl.text = snapshot.data["nama"];
                                 dateinput.text = snapshot.data["tgl_lahir"];
+                                jenisKelaminSelected = snapshot
+                                    .data["jenis_kelamin"]
+                                    .toString()
+                                    .toLowerCase();
                                 var jenisKelaminSelectedUser =
                                     (snapshot.data["jenis_kelamin"] ==
                                             "laki-laki"
@@ -110,25 +107,28 @@ class _SettingState extends State<Setting> {
                                 alamatControl.text = snapshot.data["alamat"];
                                 kontakControl.text = snapshot.data["kontak"];
                                 emailControl.text = snapshot.data["email"];
-                                var statusSelectedUser = "";
+                                statusSelected = snapshot.data["status"]
+                                    .toString()
+                                    .toLowerCase()
+                                    .replaceAll("_", "/");
                                 switch (snapshot.data["status"]) {
                                   case "mahasiswa_mahasiswi":
-                                    statusSelectedUser =
-                                        "Mahasiswa / Mahasiswi";
+                                    statusSelected = "Mahasiswa/Mahasiswi";
                                     break;
                                   case "dosen":
-                                    statusSelectedUser = "Dosen";
+                                    statusSelected = "Dosen";
                                     break;
                                   case "staf":
-                                    statusSelectedUser = "Staf";
+                                    statusSelected = "Staf";
                                     break;
                                   case "masyarakat":
-                                    statusSelectedUser = "Masyarakat";
+                                    statusSelected = "Masyarakat";
                                     break;
                                   default:
                                 }
                                 recentActivityControl.text =
-                                    snapshot.data["created_at"];
+                                    snapshot.data["last_login"];
+
                                 return ListView(
                                   children: [
                                     // Nama Lengkap
@@ -184,12 +184,9 @@ class _SettingState extends State<Setting> {
 
                                         if (pickedDate != null) {
                                           String formattedDate =
-                                              DateFormat('dd-MM-yyyy')
+                                              DateFormat('yyyy-MM-dd')
                                                   .format(pickedDate);
-                                          setState(() {
-                                            dateinput.text =
-                                                formattedDate; //set output date to TextField value.
-                                          });
+                                          dateinput.text = formattedDate;
                                         }
                                       },
                                     ),
@@ -314,7 +311,7 @@ class _SettingState extends State<Setting> {
                                       height: 10,
                                     ),
                                     DropdownButtonFormField2(
-                                      value: statusSelectedUser,
+                                      value: statusSelected,
                                       decoration: InputDecoration(
                                         isDense: true,
                                         contentPadding: EdgeInsets.zero,
@@ -528,22 +525,29 @@ class _SettingState extends State<Setting> {
                                         ),
                                         onPressed: () {
                                           try {
-                                            if (_simpanPerubahan()) {
+                                            _simpanPerubahan(
+                                                    userState.id,
+                                                    namaLengkapControl.text,
+                                                    dateinput.text,
+                                                    jenisKelaminSelected
+                                                        .toString(),
+                                                    alamatControl.text,
+                                                    kontakControl.text,
+                                                    statusSelected.toString())
+                                                .then((value) {
+                                              Navigator.pop(context);
+                                              Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                    builder: (context) =>
+                                                        const Setting()),
+                                              );
                                               ScaffoldMessenger.of(context)
                                                   .showSnackBar(const SnackBar(
                                                 content: Text(
-                                                    "Berhasil memperbarui pengaturan"),
+                                                    "Berhasil memperbarui profil"),
                                               ));
-                                              Timer(const Duration(seconds: 2),
-                                                  () {
-                                                Navigator.push(
-                                                  context,
-                                                  MaterialPageRoute(
-                                                      builder: (context) =>
-                                                          const Landing()),
-                                                );
-                                              });
-                                            }
+                                            });
                                           } catch (e) {
                                             ScaffoldMessenger.of(context)
                                                 .showSnackBar(SnackBar(
@@ -606,6 +610,27 @@ selectFile() async {
   }
 }
 
-_simpanPerubahan() {
+Future<bool> _simpanPerubahan(String id, String nama, String tglLahir,
+    String jenisKelamin, String alamat, String kontak, String status) async {
+  // check empty data
+  if (nama.isEmpty || kontak.isEmpty) {
+    throw "Harap melengkapi data profile";
+  }
+
+  var data = <String, dynamic>{};
+  data["id_user_mobile"] = id;
+  data["nama"] = nama;
+  data["tgl_lahir"] = tglLahir;
+  data["jenis_kelamin"] = jenisKelamin;
+  data["alamat"] = alamat;
+  data["kontak"] = kontak;
+  data["status"] = status.replaceAll("/", "_");
+
+  var response = await http
+      .post(Uri.parse("${dotenv.env['API_HOST']}/pengguna/update"), body: data);
+  var result = json.decode(response.body);
+  if (result["status"] == "ERR") {
+    throw result["data"]["message"];
+  }
   return true;
 }

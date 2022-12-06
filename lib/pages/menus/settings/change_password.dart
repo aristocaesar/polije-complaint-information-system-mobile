@@ -1,6 +1,14 @@
+import 'dart:async';
+
+import 'package:elapor_polije/pages/auth/login.dart';
+import 'package:elapor_polije/session/user_state.dart';
 import 'package:flutter/material.dart';
 import 'package:elapor_polije/component/hero_main.dart';
 import 'package:elapor_polije/component/drawer.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:get/get.dart';
+import 'dart:convert';
+import 'package:http/http.dart' as http;
 
 class ChangePassword extends StatefulWidget {
   static const nameRoute = "/change_password";
@@ -11,6 +19,9 @@ class ChangePassword extends StatefulWidget {
 }
 
 class _ChangePasswordState extends State<ChangePassword> {
+  // global state
+  final userState = Get.put(UserStateController());
+
   final _scaffoldKey = GlobalKey<ScaffoldState>();
   // controller
   final _passwordController = TextEditingController();
@@ -113,7 +124,7 @@ class _ChangePasswordState extends State<ChangePassword> {
                               ),
                               const SizedBox(height: 10),
                               const Text(
-                                  "Setelah anda mengklik simpan, anda akan otomatis keluar.",
+                                  "Setelah anda mengklik simpan, anda akan otomatis logout.",
                                   style: TextStyle(
                                       fontFamily: 'Poppins', fontSize: 16)),
                               const SizedBox(height: 30),
@@ -131,18 +142,21 @@ class _ChangePasswordState extends State<ChangePassword> {
                                   onPressed: () async {
                                     try {
                                       if (await _submitChangePassword(
-                                        _passwordController.text,
-                                        _konfirmasiPasswordController.text,
-                                        _oldPasswordController.text,
-                                      )) {
+                                          _passwordController.text,
+                                          _konfirmasiPasswordController.text,
+                                          _oldPasswordController.text,
+                                          userState)) {
                                         // ignore: use_build_context_synchronously
                                         ScaffoldMessenger.of(context)
                                             .showSnackBar(const SnackBar(
                                           content: Text(
-                                              'Password berhasil diperbarui'),
+                                              'Password berhasil diperbarui, anda akan logout'),
                                         ));
-                                        // ignore: use_build_context_synchronously
-                                        Navigator.pop(context);
+                                        Timer(const Duration(seconds: 3), () {
+                                          Navigator.pop(context);
+                                          Navigator.of(context)
+                                              .pushNamed(Login.nameRoute);
+                                        });
                                       }
                                     } catch (e) {
                                       ScaffoldMessenger.of(context)
@@ -174,12 +188,24 @@ class _ChangePasswordState extends State<ChangePassword> {
   }
 }
 
-Future<bool> _submitChangePassword(
-    String email, String password, String konfirmasipassword) async {
-  // Obtain shared preferences.
-  // final prefs = await SharedPreferences.getInstance();
-  // print(email);
-  // print(password);
-  // print(konfirmasiPassword)
+Future<bool> _submitChangePassword(String password, String konfirmasiPassword,
+    String passwordLama, UserStateController userState) async {
+  // check password match
+  if (password != konfirmasiPassword) {
+    throw "Password tidak sama";
+  }
+  // change password
+  var data = <String, dynamic>{};
+  data["id_user_mobile"] = userState.id;
+  data["password"] = password;
+  data["password2"] = konfirmasiPassword;
+  data["old_password"] = passwordLama;
+  var response = await http.post(
+      Uri.parse("${dotenv.env['API_HOST']}/pengguna/changepassword"),
+      body: data);
+  var result = json.decode(response.body);
+  if (result["status"] == "ERR") {
+    throw result["data"]["message"];
+  }
   return true;
 }
