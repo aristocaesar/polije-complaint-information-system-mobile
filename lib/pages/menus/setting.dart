@@ -461,7 +461,7 @@ class _SettingState extends State<Setting> {
                                       Expanded(
                                         child: TextButton(
                                           onPressed: () {
-                                            selectFile();
+                                            selectFile(userState);
                                           },
                                           style: ElevatedButton.styleFrom(
                                             backgroundColor:
@@ -594,19 +594,23 @@ class _SettingState extends State<Setting> {
 }
 
 //fungsi untuk select file
-selectFile() async {
-  FilePickerResult? result = await FilePicker.platform.pickFiles();
+selectFile(UserStateController userState) async {
+  FilePickerResult? result = await FilePicker.platform.pickFiles(
+      type: FileType.custom, allowedExtensions: ["jpeg", "png", "jpg"]);
   if (result != null) {
-    // PlatformFile file = result.files.first;
-
-    // print(file.name);
-    // print(file.bytes);
-    // print(file.size);
-    // print(file.extension);
-    // print(file.path);
-    return true;
-  } else {
-    // User canceled the picker
+    PlatformFile file = result.files.first;
+    var request = http.MultipartRequest(
+        "POST", Uri.parse("${dotenv.env['API_HOST']}/pengguna/changefoto"));
+    request.fields["id_user_mobile"] = userState.id;
+    request.files
+        .add(await http.MultipartFile.fromPath("foto", file.path.toString()));
+    var response = await request.send();
+    var responsed = await http.Response.fromStream(response);
+    if (responsed.statusCode == 200) {
+      return true;
+    } else {
+      throw "Gagal memperbarui foto profil";
+    }
   }
 }
 
