@@ -66,51 +66,6 @@ class _InformasiState extends State<Informasi> {
                                 top: 20.0, right: 20.0, left: 20.0),
                             child: ListView(
                               children: [
-                                // Judul
-                                const Text(
-                                  "Judul",
-                                  style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontFamily: 'Poppins',
-                                      fontSize: 18),
-                                ),
-                                const SizedBox(
-                                  height: 10,
-                                ),
-                                TextFormField(
-                                  decoration: InputDecoration(
-                                    hintText: "Ketikkan Judul Informasi",
-                                    border: OutlineInputBorder(
-                                        borderRadius:
-                                            BorderRadius.circular(5.0)),
-                                  ),
-                                ),
-                                const SizedBox(
-                                  height: 30,
-                                ),
-                                // Deskripsi
-                                const Text(
-                                  "Deskripsi",
-                                  style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontFamily: 'Poppins',
-                                      fontSize: 18),
-                                ),
-                                const SizedBox(
-                                  height: 10,
-                                ),
-                                TextFormField(
-                                  maxLines: 8,
-                                  decoration: InputDecoration(
-                                    hintText: "Ketikkan Deskripsi Informasi",
-                                    border: OutlineInputBorder(
-                                        borderRadius:
-                                            BorderRadius.circular(5.0)),
-                                  ),
-                                ),
-                                const SizedBox(
-                                  height: 30,
-                                ),
                                 // Katgeori
                                 const Text(
                                   "Kategori",
@@ -218,6 +173,29 @@ class _InformasiState extends State<Informasi> {
                                   onSaved: (value) {
                                     divisiSelected = value.toString();
                                   },
+                                ),
+                                const SizedBox(
+                                  height: 30,
+                                ),
+                                // Deskripsi
+                                const Text(
+                                  "Deskripsi",
+                                  style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontFamily: 'Poppins',
+                                      fontSize: 18),
+                                ),
+                                const SizedBox(
+                                  height: 10,
+                                ),
+                                TextFormField(
+                                  maxLines: 8,
+                                  decoration: InputDecoration(
+                                    hintText: "Ketikkan Deskripsi Informasi",
+                                    border: OutlineInputBorder(
+                                        borderRadius:
+                                            BorderRadius.circular(5.0)),
+                                  ),
                                 ),
                                 const SizedBox(
                                   height: 30,

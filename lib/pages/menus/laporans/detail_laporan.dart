@@ -18,7 +18,6 @@ class DetailLaporan extends StatefulWidget {
 class _DetailLaporanState extends State<DetailLaporan> {
   final _scaffoldKey = GlobalKey<ScaffoldState>();
   //form state
-  final TextEditingController judul = TextEditingController();
   final TextEditingController deskripsiPengaduan = TextEditingController();
   final TextEditingController kategori = TextEditingController();
   final TextEditingController divisi = TextEditingController();
@@ -76,24 +75,6 @@ class _DetailLaporanState extends State<DetailLaporan> {
                                     fontWeight: FontWeight.bold,
                                     fontFamily: 'Poppins',
                                     fontSize: 17),
-                              ),
-                              const SizedBox(height: 10),
-                              const Text(
-                                "Judul",
-                                style: TextStyle(
-                                    fontFamily: 'Poppins', fontSize: 17),
-                              ),
-                              const SizedBox(
-                                height: 10,
-                              ),
-                              TextFormField(
-                                controller: judul,
-                                decoration: InputDecoration(
-                                  contentPadding: const EdgeInsets.all(15),
-                                  hintText: "Ketikkan Judul",
-                                  border: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(5.0)),
-                                ),
                               ),
                               const SizedBox(
                                 height: 30,
@@ -329,7 +310,6 @@ class _DetailLaporanState extends State<DetailLaporan> {
                                     ),
                                     onPressed: () {
                                       if (submitlaporanedit(
-                                          judul.text,
                                           deskripsiPengaduan.text,
                                           kategoriSelected.toString(),
                                           divisi.text,
@@ -379,14 +359,7 @@ class _DetailLaporanState extends State<DetailLaporan> {
 //   context: context,
 //   initialTime: TimeOfDay(hour: hour, minute: minute, second))
 
-submitlaporanedit(String judul, String deskripsiPengaduan, String kategori,
-    String divisi, String status, String dateinput, String deskripsiTanggapan) {
-  // print(judul);
-  // print(deskripsiPengaduan);
-  // print(kategori);
-  // print(divisi);
-  // print(status);
-  // print(dateinput);
-  // print(deskripsiTanggapan);
+submitlaporanedit(String deskripsiPengaduan, String kategori, String divisi,
+    String status, String dateinput, String deskripsiTanggapan) {
   return true;
 }

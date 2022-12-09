@@ -61,50 +61,7 @@ class _AspirasiState extends State<Aspirasi> {
                               top: 20.0, right: 20.0, left: 20.0),
                           child: ListView(
                             children: [
-                              // Judul
-                              const Text(
-                                "Judul",
-                                style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    fontFamily: 'Poppins',
-                                    fontSize: 18),
-                              ),
-                              const SizedBox(
-                                height: 10,
-                              ),
-                              TextFormField(
-                                decoration: InputDecoration(
-                                  hintText: "Ketikkan Judul Aspirasi",
-                                  border: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(5.0)),
-                                ),
-                              ),
-                              const SizedBox(
-                                height: 30,
-                              ),
-                              // Deskripsi
-                              const Text(
-                                "Deskripsi",
-                                style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    fontFamily: 'Poppins',
-                                    fontSize: 18),
-                              ),
-                              const SizedBox(
-                                height: 10,
-                              ),
-                              TextFormField(
-                                maxLines: 8,
-                                decoration: InputDecoration(
-                                  hintText: "Ketikkan Deskripsi Aspirasi",
-                                  border: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(5.0)),
-                                ),
-                              ),
-                              const SizedBox(
-                                height: 30,
-                              ),
-                              // Katgeori
+                              // Kategeori
                               const Text(
                                 "Kategori",
                                 style: TextStyle(
@@ -211,6 +168,28 @@ class _AspirasiState extends State<Aspirasi> {
                                 onSaved: (value) {
                                   divisiSelected = value.toString();
                                 },
+                              ),
+                              const SizedBox(
+                                height: 30,
+                              ),
+                              // Deskripsi
+                              const Text(
+                                "Deskripsi",
+                                style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontFamily: 'Poppins',
+                                    fontSize: 18),
+                              ),
+                              const SizedBox(
+                                height: 10,
+                              ),
+                              TextFormField(
+                                maxLines: 8,
+                                decoration: InputDecoration(
+                                  hintText: "Ketikkan Deskripsi Aspirasi",
+                                  border: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(5.0)),
+                                ),
                               ),
                               const SizedBox(
                                 height: 30,
