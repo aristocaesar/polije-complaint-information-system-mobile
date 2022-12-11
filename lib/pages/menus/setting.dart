@@ -106,7 +106,12 @@ class _SettingState extends State<Setting> {
                                         : "Perempuan");
                                 alamatControl.text = snapshot.data["alamat"];
                                 kontakControl.text = snapshot.data["kontak"];
-                                emailControl.text = snapshot.data["email"];
+                                emailControl.text = snapshot.data["email"] +
+                                    " - " +
+                                    snapshot.data["verifikasi_email"]
+                                        .toString()
+                                        .replaceAll("_", " ")
+                                        .capitalize;
                                 statusSelected = snapshot.data["status"]
                                     .toString()
                                     .toLowerCase()
@@ -379,24 +384,32 @@ class _SettingState extends State<Setting> {
                                                 BorderRadius.circular(5.0)),
                                       ),
                                     ),
-                                    TextButton(
-                                      onPressed: () {
-                                        Navigator.of(context)
-                                            .pushNamed(ChangeEmail.nameRoute);
-                                      },
-                                      style: ButtonStyle(
-                                        alignment: Alignment.centerLeft,
-                                        padding: MaterialStateProperty.all<
-                                            EdgeInsetsGeometry>(
-                                          EdgeInsets.zero,
+                                    Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        TextButton(
+                                          onPressed: () {
+                                            Navigator.of(context).pushNamed(
+                                                ChangeEmail.nameRoute);
+                                          },
+                                          style: ButtonStyle(
+                                            alignment: Alignment.centerLeft,
+                                            padding: MaterialStateProperty.all<
+                                                EdgeInsetsGeometry>(
+                                              EdgeInsets.zero,
+                                            ),
+                                          ),
+                                          child: const Text(
+                                            "Ganti Email",
+                                            style: TextStyle(
+                                                fontFamily: "Poppins",
+                                                fontSize: 18),
+                                          ),
                                         ),
-                                      ),
-                                      child: const Text(
-                                        "Ganti Email",
-                                        style: TextStyle(
-                                            fontFamily: "Poppins",
-                                            fontSize: 18),
-                                      ),
+                                        _kirimUlangVerifikasi(
+                                            context, userState),
+                                      ],
                                     ),
                                     const SizedBox(
                                       height: 30,
@@ -611,6 +624,33 @@ selectFile(UserStateController userState) async {
     } else {
       throw "Gagal memperbarui foto profil";
     }
+  }
+}
+
+Widget _kirimUlangVerifikasi(BuildContext ctx, UserStateController userState) {
+  if (userState.verifikasiEmail == "belum_terverifikasi") {
+    return TextButton(
+      onPressed: () {
+        ScaffoldMessenger.of(ctx).showSnackBar(const SnackBar(
+          content: Text("Mohon tunggu sebentar"),
+        ));
+        ScaffoldMessenger.of(ctx).showSnackBar(const SnackBar(
+          content: Text("Tautan verifikasi berhasil dikirim ulang"),
+        ));
+      },
+      style: ButtonStyle(
+        alignment: Alignment.centerLeft,
+        padding: MaterialStateProperty.all<EdgeInsetsGeometry>(
+          EdgeInsets.zero,
+        ),
+      ),
+      child: const Text(
+        "Kirim Ulang Verifikasi",
+        style: TextStyle(fontFamily: "Poppins", fontSize: 18),
+      ),
+    );
+  } else {
+    return const Text("");
   }
 }
 

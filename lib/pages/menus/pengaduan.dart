@@ -15,12 +15,7 @@ class Pengaduan extends StatefulWidget {
 class _PengaduanState extends State<Pengaduan> {
   final _scaffoldKey = GlobalKey<ScaffoldState>();
   // kategori
-  final List<String> kategoriItems = [
-    'Lingkungan',
-    'Prasaranan',
-    'Kegiatan Pembelajaran',
-    'Kategori Lain',
-  ];
+  final List<String> kategoriItems = ["ok", "okk"];
   String? kategoriSelected;
 
   // divisi

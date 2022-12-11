@@ -1,9 +1,11 @@
+import 'package:elapor_polije/session/user_state.dart';
 import 'package:flutter/material.dart';
 import 'package:elapor_polije/component/hero_main.dart';
 import 'package:elapor_polije/component/drawer.dart';
 import 'package:elapor_polije/pages/menus/aspirasi.dart';
 import 'package:elapor_polije/pages/menus/informasi.dart';
 import 'package:elapor_polije/pages/menus/pengaduan.dart';
+import 'package:get/get.dart';
 
 class Landing extends StatefulWidget {
   static const nameRoute = "/landing";
@@ -14,6 +16,9 @@ class Landing extends StatefulWidget {
 }
 
 class _LandingState extends State<Landing> {
+  // global state
+  final userState = Get.put(UserStateController());
+
   final _scaffoldKey = GlobalKey<ScaffoldState>();
 
   @override
@@ -49,19 +54,22 @@ class _LandingState extends State<Landing> {
                                   Icons.chat_bubble_outline,
                                   "Pengaduan",
                                   "Laporkan sebuah informasi",
-                                  Pengaduan.nameRoute),
+                                  Pengaduan.nameRoute,
+                                  userState),
                               _buildItemKlasifikasi(
                                   context,
                                   Icons.send,
                                   "Aspirasi",
                                   "Kirimkan suara aspirasimu",
-                                  Aspirasi.nameRoute),
+                                  Aspirasi.nameRoute,
+                                  userState),
                               _buildItemKlasifikasi(
                                   context,
                                   Icons.info,
                                   "Informasi",
                                   "Dapatkan informasi kampus",
-                                  Informasi.nameRoute)
+                                  Informasi.nameRoute,
+                                  userState)
                             ],
                           )),
                     ),
@@ -73,12 +81,20 @@ class _LandingState extends State<Landing> {
 }
 
 Widget _buildItemKlasifikasi(BuildContext ctx, IconData icon, String title,
-    String description, String push) {
+    String description, String push, UserStateController userState) {
   return Column(
     children: [
       GestureDetector(
         onTap: () {
-          Navigator.of(ctx).pushNamed(push);
+          if (userState.verifikasiEmail == "belum_terverifikasi") {
+            ScaffoldMessenger.of(ctx).showSnackBar(const SnackBar(
+              content:
+                  Text("Harap verifikasi email sebelum menggunakan layanan"),
+            ));
+          } else {
+            Navigator.pop(ctx);
+            Navigator.of(ctx).pushNamed(push);
+          }
         },
         child: Card(
             elevation: 2,

@@ -230,19 +230,23 @@ class _LoginState extends State<Login> {
 Future<bool> _loginSubmit(
     String email, String password, UserStateController userState) async {
   if (email.isEmpty || password.isEmpty) {
-    throw "Harap mengisi email dan password";
+    throw "Harap melengkapi email dan password";
   }
   var data = <String, dynamic>{};
-  data["email"] = email;
-  data["password"] = password;
+  data["email"] = email.trim();
+  data["password"] = password.trim();
   var response =
       await http.post(Uri.parse("${dotenv.env['API_HOST']}/login"), body: data);
   var result = json.decode(response.body);
   if (result["status"] != "ERR") {
     var user = result["data"];
-    // init session
-    userState.setState(user["id"], user["nama"], user["email"],
-        "${dotenv.env['BASE_HOST']}/public/upload/assets/images/${user['foto']}");
+    // init sessions
+    userState.setState(
+        user["id"],
+        user["nama"],
+        user["email"],
+        "${dotenv.env['BASE_HOST']}/public/upload/assets/images/${user['foto']}",
+        user["verifikasi_email"]);
     Session().setSession({
       "id": user["id"],
       "nama": user["nama"],

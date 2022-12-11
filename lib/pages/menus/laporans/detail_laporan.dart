@@ -344,21 +344,6 @@ class _DetailLaporanState extends State<DetailLaporan> {
   }
 }
 
-// Future pickDateTime() async {
-//   DateTime? date = await pickDate();
-//   if (date == null) return;
-// }
-
-// Future<DateTime?> pickDate() => showDatePicker(
-//     context: context,
-//     initialDate: DateTime.now(),
-//     firstDate: DateTime(2000),
-//     lastDate: (2100));
-// //
-// future<TimeOfDay?> pickTime() => showTimePicker(
-//   context: context,
-//   initialTime: TimeOfDay(hour: hour, minute: minute, second))
-
 submitlaporanedit(String deskripsiPengaduan, String kategori, String divisi,
     String status, String dateinput, String deskripsiTanggapan) {
   return true;

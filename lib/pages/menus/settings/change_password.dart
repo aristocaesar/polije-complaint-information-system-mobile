@@ -1,6 +1,5 @@
 import 'dart:async';
 
-import 'package:elapor_polije/pages/auth/login.dart';
 import 'package:elapor_polije/session/user_state.dart';
 import 'package:flutter/material.dart';
 import 'package:elapor_polije/component/hero_main.dart';
@@ -41,7 +40,7 @@ class _ChangePasswordState extends State<ChangePassword> {
             ),
             child: Column(
               children: <Widget>[
-                HeroComponent(title: "Ganti Password", drawer: _scaffoldKey),
+                HeroComponent(title: "Password", drawer: _scaffoldKey),
                 Expanded(
                   child: Container(
                     decoration: const BoxDecoration(
@@ -57,7 +56,7 @@ class _ChangePasswordState extends State<ChangePassword> {
                           child: ListView(
                             children: [
                               const Text(
-                                "Password",
+                                "Password Baru",
                                 style: TextStyle(
                                     fontWeight: FontWeight.bold,
                                     fontFamily: 'Poppins',
@@ -69,14 +68,14 @@ class _ChangePasswordState extends State<ChangePassword> {
                               TextFormField(
                                 controller: _passwordController,
                                 decoration: InputDecoration(
-                                  hintText: "Ketik Password",
+                                  hintText: "Ketik Password Baru",
                                   border: OutlineInputBorder(
                                       borderRadius: BorderRadius.circular(5.0)),
                                 ),
                               ),
                               const SizedBox(height: 30),
                               const Text(
-                                "Konfirmasi Password",
+                                "Konfirmasi Password Baru",
                                 style: TextStyle(
                                     fontWeight: FontWeight.bold,
                                     fontFamily: 'Poppins',
@@ -88,7 +87,7 @@ class _ChangePasswordState extends State<ChangePassword> {
                               TextFormField(
                                 controller: _konfirmasiPasswordController,
                                 decoration: InputDecoration(
-                                  hintText: "Ketik Ulang Password",
+                                  hintText: "Ketik Ulang Password Baru",
                                   border: OutlineInputBorder(
                                       borderRadius: BorderRadius.circular(5.0)),
                                 ),
@@ -109,7 +108,7 @@ class _ChangePasswordState extends State<ChangePassword> {
                               TextFormField(
                                 controller: _oldPasswordController,
                                 decoration: InputDecoration(
-                                  hintText: "Ketikkan Email",
+                                  hintText: "Ketikkan Password Lama",
                                   border: OutlineInputBorder(
                                       borderRadius: BorderRadius.circular(5.0)),
                                 ),
@@ -139,31 +138,25 @@ class _ChangePasswordState extends State<ChangePassword> {
                                       borderRadius: BorderRadius.circular(8),
                                     ),
                                   ),
-                                  onPressed: () async {
-                                    try {
-                                      if (await _submitChangePassword(
-                                          _passwordController.text,
-                                          _konfirmasiPasswordController.text,
-                                          _oldPasswordController.text,
-                                          userState)) {
-                                        // ignore: use_build_context_synchronously
-                                        ScaffoldMessenger.of(context)
-                                            .showSnackBar(const SnackBar(
-                                          content: Text(
-                                              'Password berhasil diperbarui, anda akan logout'),
-                                        ));
-                                        Timer(const Duration(seconds: 3), () {
-                                          Navigator.pop(context);
-                                          Navigator.of(context)
-                                              .pushNamed(Login.nameRoute);
-                                        });
-                                      }
-                                    } catch (e) {
+                                  onPressed: () {
+                                    _submitChangePassword(
+                                            _passwordController.text,
+                                            _konfirmasiPasswordController.text,
+                                            _oldPasswordController.text,
+                                            userState)
+                                        .then((value) {
+                                      ScaffoldMessenger.of(context)
+                                          .showSnackBar(const SnackBar(
+                                        content: Text(
+                                            'Password berhasil diperbarui, anda'),
+                                      ));
+                                      Navigator.pop(context);
+                                    }).catchError((error) {
                                       ScaffoldMessenger.of(context)
                                           .showSnackBar(SnackBar(
-                                        content: Text(e.toString()),
+                                        content: Text(error),
                                       ));
-                                    }
+                                    });
                                   },
                                   child: const Text(
                                     "Simpan",
@@ -197,9 +190,9 @@ Future<bool> _submitChangePassword(String password, String konfirmasiPassword,
   // change password
   var data = <String, dynamic>{};
   data["id_user_mobile"] = userState.id;
-  data["password"] = password;
-  data["password2"] = konfirmasiPassword;
-  data["old_password"] = passwordLama;
+  data["password"] = password.trim();
+  data["password2"] = konfirmasiPassword.trim();
+  data["old_password"] = passwordLama.trim();
   var response = await http.post(
       Uri.parse("${dotenv.env['API_HOST']}/pengguna/changepassword"),
       body: data);

@@ -475,16 +475,16 @@ Future<bool> _registerSubmit(
     }
     // register
     var data = <String, dynamic>{};
-    data["nama_lengkap"] = namaLengkap;
-    data["email"] = email;
-    data["password"] = password;
-    data["tgl_lahir"] = tanggalLahir;
-    data["jenis_kelamin"] = jenisKelamin;
-    data["password"] = password;
-    data["password2"] = password2;
-    data["kontak"] = kontak;
+    data["nama_lengkap"] = namaLengkap.trim();
+    data["email"] = email.trim();
+    data["password"] = password.trim();
+    data["tgl_lahir"] = tanggalLahir.trim();
+    data["jenis_kelamin"] = jenisKelamin.trim();
+    data["password"] = password.trim();
+    data["password2"] = password2.trim();
+    data["kontak"] = kontak.trim();
     var sts = status.toLowerCase().replaceAll(RegExp(" +"), "");
-    data["status"] = sts.replaceAll("/", "_");
+    data["status"] = sts.replaceAll("/", "_").trim();
     var response = await http
         .post(Uri.parse("${dotenv.env['API_HOST']}/register"), body: data);
     var result = json.decode(response.body);

@@ -179,7 +179,8 @@ class _RecoveryState extends State<Recovery> {
 
 Future<bool> _recoverySubmit(String email) async {
   var data = <String, dynamic>{};
-  data["email"] = (email.isNotEmpty) ? email : "email";
+  var userMail = (email.isNotEmpty) ? email : "email";
+  data["email"] = userMail.trim();
   var response = await http
       .post(Uri.parse("${dotenv.env['API_HOST']}/recovery"), body: data);
   var result = json.decode(response.body);
