@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:elapor_polije/session/user_state.dart';
 import 'package:flutter/material.dart';
 import 'package:elapor_polije/component/hero_main.dart';
@@ -5,7 +7,9 @@ import 'package:elapor_polije/component/drawer.dart';
 import 'package:elapor_polije/pages/menus/aspirasi.dart';
 import 'package:elapor_polije/pages/menus/informasi.dart';
 import 'package:elapor_polije/pages/menus/pengaduan.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get/get.dart';
+import 'package:http/http.dart' as http;
 
 class Landing extends StatefulWidget {
   static const nameRoute = "/landing";
@@ -86,15 +90,14 @@ Widget _buildItemKlasifikasi(BuildContext ctx, IconData icon, String title,
     children: [
       GestureDetector(
         onTap: () {
-          if (userState.verifikasiEmail == "belum_terverifikasi") {
-            ScaffoldMessenger.of(ctx).showSnackBar(const SnackBar(
-              content:
-                  Text("Harap verifikasi email sebelum menggunakan layanan"),
+          _getUserVerifikasiEmail(userState.id).then((value) {
+            // Navigator.pop(ctx);
+            // Navigator.of(ctx).pushNamed(push);
+          }).catchError((error) {
+            ScaffoldMessenger.of(ctx).showSnackBar(SnackBar(
+              content: Text(error),
             ));
-          } else {
-            Navigator.pop(ctx);
-            Navigator.of(ctx).pushNamed(push);
-          }
+          });
         },
         child: Card(
             elevation: 2,
@@ -125,4 +128,16 @@ Widget _buildItemKlasifikasi(BuildContext ctx, IconData icon, String title,
       const SizedBox(height: 25)
     ],
   );
+}
+
+Future<bool> _getUserVerifikasiEmail(String id) async {
+  var response = await http
+      .get(Uri.parse("${dotenv.env['API_HOST']}/pengguna/${id.trim()}"));
+  var result = json.decode(response.body);
+  var user = result["data"];
+  if (user["verifikasi_email"] == "terverifikasi") {
+    return true;
+  } else {
+    throw "Harap verifikasi email sebelum menggunakan layanan";
+  }
 }

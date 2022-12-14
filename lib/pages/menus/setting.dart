@@ -37,6 +37,9 @@ class _SettingState extends State<Setting> {
   final TextEditingController emailControl = TextEditingController();
   final TextEditingController recentActivityControl = TextEditingController();
 
+// status verifikasi
+  String getUserVerifikasi = "terverifikasi";
+
   // status
   final List<String> statusItems = [
     'Mahasiswa/Mahasiswi',
@@ -59,6 +62,9 @@ class _SettingState extends State<Setting> {
     var response =
         await http.get(Uri.parse("${dotenv.env['API_HOST']}/pengguna/$id"));
     var result = json.decode(response.body);
+    setState(() {
+      getUserVerifikasi = result["data"]["verifikasi_email"];
+    });
     return result["data"];
   }
 
@@ -408,7 +414,7 @@ class _SettingState extends State<Setting> {
                                           ),
                                         ),
                                         _kirimUlangVerifikasi(
-                                            context, userState),
+                                            context, getUserVerifikasi),
                                       ],
                                     ),
                                     const SizedBox(
@@ -627,13 +633,22 @@ selectFile(UserStateController userState) async {
   }
 }
 
-Widget _kirimUlangVerifikasi(BuildContext ctx, UserStateController userState) {
-  if (userState.verifikasiEmail == "belum_terverifikasi") {
+Widget _kirimUlangVerifikasi(BuildContext ctx, String userVerifikasi) {
+  if (userVerifikasi == "belum_terverifikasi") {
     return TextButton(
-      onPressed: () {
+      onPressed: () async {
+        // send ulang token
+        // var data = <String, dynamic>{};
+        // // data["email"]
+        // var response = await http.post(
+        //     Uri.parse("${dotenv.env['API_HOST']}/pengguna/update"),
+        //     body: data);
+        // var result = json.decode(response.body);
+        // ignore: use_build_context_synchronously
         ScaffoldMessenger.of(ctx).showSnackBar(const SnackBar(
           content: Text("Mohon tunggu sebentar"),
         ));
+        // ignore: use_build_context_synchronously
         ScaffoldMessenger.of(ctx).showSnackBar(const SnackBar(
           content: Text("Tautan verifikasi berhasil dikirim ulang"),
         ));
