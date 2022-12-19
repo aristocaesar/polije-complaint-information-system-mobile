@@ -1,11 +1,12 @@
-import 'dart:convert';
-
 import 'package:dropdown_button2/dropdown_button2.dart';
+import 'package:elapor_polije/session/user_state.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:elapor_polije/component/hero_main.dart';
 import 'package:elapor_polije/component/drawer.dart';
+import 'dart:convert';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 
 class Pengaduan extends StatefulWidget {
@@ -17,32 +18,55 @@ class Pengaduan extends StatefulWidget {
 }
 
 class _PengaduanState extends State<Pengaduan> {
+  // global state
+  final userState = Get.put(UserStateController());
   final _scaffoldKey = GlobalKey<ScaffoldState>();
+
+  // controller
+  TextEditingController deskripsi = TextEditingController();
+
   // kategori
   final List<String> kategoriItems = [];
-  String? kategoriSelected;
+  String kategoriSelected = "";
 
   // divisi
-  final List<String> divisiItems = [
-    'Mahasiswa / Mahasiswi',
-    'Dosen',
-    'Staf',
-    'Masyarakat',
-  ];
-  String? divisiSelected;
+  final List<String> divisiItems = [];
+  String divisiSelected = "";
 
-  void _setKategoriDivisi() async {
+  // lampiran
+  String namaLampiran = "Upload File";
+  String pathLampiran = "";
+
+  Future<void> _getDivisiKategori() async {
     // kategori
+    List<String> kategori = [];
     var kategoriResponse =
         await http.get(Uri.parse("${dotenv.env['API_HOST']}/kategori"));
     var resultKategori = json.decode(kategoriResponse.body)["data"];
-    print(resultKategori.);
+    for (Map i in resultKategori) {
+      kategori.add(i["nama"]);
+    }
+    setState(() {
+      kategoriItems.addAll(kategori);
+    });
+
+    // divisi
+    List<String> divisi = [];
+    var divisiResponse =
+        await http.get(Uri.parse("${dotenv.env['API_HOST']}/divisi"));
+    var resultdivisi = json.decode(divisiResponse.body)["data"];
+    for (Map i in resultdivisi) {
+      divisi.add(i["nama"]);
+    }
+    setState(() {
+      divisiItems.addAll(divisi);
+    });
   }
 
   @override
   void initState() {
     super.initState();
-    _setKategoriDivisi();
+    _getDivisiKategori();
   }
 
   @override
@@ -110,9 +134,9 @@ class _PengaduanState extends State<Pengaduan> {
                                 ),
                                 items: kategoriItems
                                     .map((item) => DropdownMenuItem<String>(
-                                          value: item,
+                                          value: item.toString(),
                                           child: Text(
-                                            item,
+                                            item.toString(),
                                             style: const TextStyle(
                                               fontSize: 14,
                                             ),
@@ -196,9 +220,10 @@ class _PengaduanState extends State<Pengaduan> {
                                 height: 10,
                               ),
                               TextFormField(
+                                controller: deskripsi,
                                 maxLines: 8,
                                 decoration: InputDecoration(
-                                  hintText: "Ketikkan Deskripsi Pengaduan",
+                                  hintText: "Masukkan Pengaduan",
                                   border: OutlineInputBorder(
                                       borderRadius: BorderRadius.circular(5.0)),
                                 ),
@@ -221,26 +246,19 @@ class _PengaduanState extends State<Pengaduan> {
                                   Expanded(
                                     child: TextFormField(
                                         readOnly: true,
-                                        validator: (String? value) {
-                                          if (value == null || value.isEmpty) {
-                                            return 'File harus diupload';
-                                          } else {
-                                            return null;
-                                          }
-                                        },
-                                        // controller: txtFilePicker,
-                                        decoration: const InputDecoration(
+                                        decoration: InputDecoration(
                                           filled: true,
                                           fillColor: Colors.white,
-                                          border: OutlineInputBorder(
+                                          border: const OutlineInputBorder(
                                               borderRadius: BorderRadius.all(
                                                 Radius.circular(5.0),
                                               ),
                                               borderSide: BorderSide(
                                                   color: Colors.white,
                                                   width: 2)),
-                                          hintText: 'Upload File',
-                                          contentPadding: EdgeInsets.all(10.0),
+                                          hintText: namaLampiran,
+                                          contentPadding:
+                                              const EdgeInsets.all(10.0),
                                         ),
                                         style: const TextStyle(fontSize: 16.0)),
                                   ),
@@ -254,7 +272,17 @@ class _PengaduanState extends State<Pengaduan> {
                                     label: const Text('Pilih File',
                                         style: TextStyle(fontSize: 16.0)),
                                     onPressed: () {
-                                      selectFile();
+                                      selectFile().then((value) {
+                                        setState(() {
+                                          namaLampiran = value["nama"];
+                                          pathLampiran = value["path"];
+                                        });
+                                      }).catchError((error) {
+                                        ScaffoldMessenger.of(context)
+                                            .showSnackBar(SnackBar(
+                                          content: Text(error.toString()),
+                                        ));
+                                      });
                                     },
                                     style: ElevatedButton.styleFrom(
                                       backgroundColor: const Color.fromARGB(
@@ -268,6 +296,14 @@ class _PengaduanState extends State<Pengaduan> {
                                     ),
                                   ),
                                 ],
+                              ),
+                              const SizedBox(height: 10),
+                              const Text(
+                                "*Maksimal ukuran lampiran 10 MB",
+                                style: TextStyle(
+                                    fontStyle: FontStyle.italic,
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.w300),
                               ),
                               const SizedBox(
                                 height: 50,
@@ -284,21 +320,26 @@ class _PengaduanState extends State<Pengaduan> {
                                     ),
                                   ),
                                   onPressed: () {
-                                    try {
-                                      if (_sendPengaduan()) {
-                                        ScaffoldMessenger.of(context)
-                                            .showSnackBar(const SnackBar(
-                                          content: Text(
-                                              "Berhasil mengirimkan Pengaduan"),
-                                        ));
-                                        Navigator.pop(context);
-                                      }
-                                    } catch (e) {
+                                    _sendPengaduan(
+                                            userState.id,
+                                            kategoriSelected,
+                                            divisiSelected,
+                                            deskripsi.text,
+                                            pathLampiran,
+                                            context)
+                                        .then((value) {
+                                      Navigator.pop(context);
+                                      ScaffoldMessenger.of(context)
+                                          .showSnackBar(const SnackBar(
+                                        content: Text(
+                                            "Berhasil mengirimkan pengaduan"),
+                                      ));
+                                    }).catchError((error) {
                                       ScaffoldMessenger.of(context)
                                           .showSnackBar(SnackBar(
-                                        content: Text(e.toString()),
+                                        content: Text(error.toString()),
                                       ));
-                                    }
+                                    });
                                   },
                                   child: const Text(
                                     "Kirim Pengaduan",
@@ -324,23 +365,43 @@ class _PengaduanState extends State<Pengaduan> {
 }
 
 //fungsi untuk select file
-selectFile() async {
+Future<Map<String, dynamic>> selectFile() async {
   FilePickerResult? result = await FilePicker.platform.pickFiles();
   if (result != null) {
-    // PlatformFile file = result.files.first;
-
-    // print(file.name);
-    // print(file.bytes);
-    // print(file.size);
-    // print(file.extension);
-    // print(file.path);
-    return true;
+    PlatformFile file = result.files.first;
+    var lampiran = <String, dynamic>{};
+    lampiran["nama"] = file.name;
+    lampiran["path"] = file.path;
+    return lampiran;
   } else {
-    // User canceled the picker
+    throw "Gagal menambahkan lampiran";
   }
 }
 
 // send informasi
-_sendPengaduan() {
+Future<bool> _sendPengaduan(String id, String kategori, String divisi,
+    String deskripsi, String lampiran, BuildContext ctx) async {
+  if (kategori.isEmpty || divisi.isEmpty || deskripsi.isEmpty) {
+    throw "Harap melengkapi informasi";
+  }
+
+  // send aduan
+  var aduan = http.MultipartRequest(
+      "POST", Uri.parse("${dotenv.env['API_HOST']}/pengaduan"));
+  aduan.fields["id_user_mobile"] = id;
+  aduan.fields["kategori"] = kategori;
+  aduan.fields["divisi"] = divisi;
+  aduan.fields["deskripsi"] = deskripsi;
+  if (lampiran.isNotEmpty) {
+    aduan.files.add(await http.MultipartFile.fromPath('foto', lampiran));
+  }
+  aduan.fields["lokasi"] = "Akses tidak diberikan";
+
+  var result = await aduan.send();
+
+  if (result.statusCode != 201) {
+    throw "Gagal mengirim pengaduan";
+  }
+
   return true;
 }
