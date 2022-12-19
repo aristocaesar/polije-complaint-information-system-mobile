@@ -91,8 +91,7 @@ Widget _buildItemKlasifikasi(BuildContext ctx, IconData icon, String title,
       GestureDetector(
         onTap: () {
           _getUserVerifikasiEmail(userState.id).then((value) {
-            // Navigator.pop(ctx);
-            // Navigator.of(ctx).pushNamed(push);
+            Navigator.of(ctx).pushNamed(push);
           }).catchError((error) {
             ScaffoldMessenger.of(ctx).showSnackBar(SnackBar(
               content: Text(error),
@@ -105,7 +104,7 @@ Widget _buildItemKlasifikasi(BuildContext ctx, IconData icon, String title,
               borderRadius: BorderRadius.circular(15),
             ),
             child: Padding(
-              padding: const EdgeInsets.only(top: 15.0, bottom: 15.0),
+              padding: const EdgeInsets.only(bottom: 15.0),
               child: ListTile(
                   leading: Icon(icon,
                       size: 40, color: const Color.fromRGBO(15, 76, 117, 1)),

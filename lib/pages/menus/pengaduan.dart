@@ -1,8 +1,12 @@
+import 'dart:convert';
+
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:elapor_polije/component/hero_main.dart';
 import 'package:elapor_polije/component/drawer.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:http/http.dart' as http;
 
 class Pengaduan extends StatefulWidget {
   static const nameRoute = "/pengaduan";
@@ -15,7 +19,7 @@ class Pengaduan extends StatefulWidget {
 class _PengaduanState extends State<Pengaduan> {
   final _scaffoldKey = GlobalKey<ScaffoldState>();
   // kategori
-  final List<String> kategoriItems = ["ok", "okk"];
+  final List<String> kategoriItems = [];
   String? kategoriSelected;
 
   // divisi
@@ -26,6 +30,20 @@ class _PengaduanState extends State<Pengaduan> {
     'Masyarakat',
   ];
   String? divisiSelected;
+
+  void _setKategoriDivisi() async {
+    // kategori
+    var kategoriResponse =
+        await http.get(Uri.parse("${dotenv.env['API_HOST']}/kategori"));
+    var resultKategori = json.decode(kategoriResponse.body)["data"];
+    print(resultKategori.);
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _setKategoriDivisi();
+  }
 
   @override
   Widget build(BuildContext context) {
