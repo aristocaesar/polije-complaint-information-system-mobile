@@ -624,8 +624,7 @@ selectFile(UserStateController userState) async {
     request.files
         .add(await http.MultipartFile.fromPath("foto", file.path.toString()));
     var response = await request.send();
-    var responsed = await http.Response.fromStream(response);
-    if (responsed.statusCode == 200) {
+    if (response.statusCode == 200) {
       return true;
     } else {
       throw "Gagal memperbarui foto profil";
