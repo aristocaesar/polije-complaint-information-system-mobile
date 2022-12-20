@@ -12,9 +12,7 @@ import 'package:http/http.dart' as http;
 class Klasifikasi extends StatefulWidget {
   static const nameRoute = "/klasifikasi";
   final String title;
-  final String endPoint;
-  const Klasifikasi({Key? key, required this.title, required this.endPoint})
-      : super(key: key);
+  const Klasifikasi({Key? key, required this.title}) : super(key: key);
 
   @override
   State<Klasifikasi> createState() => _KlasifikasiState();
@@ -27,6 +25,27 @@ class _KlasifikasiState extends State<Klasifikasi> {
 
   // controller
   TextEditingController deskripsi = TextEditingController();
+
+  // Text
+  String btnLaporan = "Kirim Pengaduan";
+  String titleDeskripsi = "Deskripsi";
+  String hintTextDeskripsi = "Masukkan pengaduan";
+  String succesMessage = "Berhasil mengirimkan pengaduan";
+
+  void _setTextDeskripsi() {
+    setState(() {
+      if (widget.title == "Aspirasi") {
+        btnLaporan = "Kirim Aspirasi";
+        hintTextDeskripsi = "Masukan sebuah aspirasi";
+        succesMessage = "Berhasil mengirimkan aspirasi";
+      } else if (widget.title == "Informasi") {
+        btnLaporan = "Minta Informasi";
+        titleDeskripsi = "Pertanyaan";
+        hintTextDeskripsi = "Masukkan sebuah pertanyaan";
+        succesMessage = "Berhasil meminta informasi";
+      }
+    });
+  }
 
   // kategori
   final List<String> kategoriItems = [];
@@ -70,6 +89,7 @@ class _KlasifikasiState extends State<Klasifikasi> {
   void initState() {
     super.initState();
     _getDivisiKategori();
+    _setTextDeskripsi();
   }
 
   @override
@@ -212,9 +232,9 @@ class _KlasifikasiState extends State<Klasifikasi> {
                                 height: 30,
                               ),
                               // Deskripsi
-                              const Text(
-                                "Deskripsi",
-                                style: TextStyle(
+                              Text(
+                                titleDeskripsi,
+                                style: const TextStyle(
                                     fontWeight: FontWeight.bold,
                                     fontFamily: 'Poppins',
                                     fontSize: 18),
@@ -226,7 +246,7 @@ class _KlasifikasiState extends State<Klasifikasi> {
                                 controller: deskripsi,
                                 maxLines: 8,
                                 decoration: InputDecoration(
-                                  hintText: "Masukkan Pengaduan",
+                                  hintText: hintTextDeskripsi,
                                   border: OutlineInputBorder(
                                       borderRadius: BorderRadius.circular(5.0)),
                                 ),
@@ -323,7 +343,8 @@ class _KlasifikasiState extends State<Klasifikasi> {
                                     ),
                                   ),
                                   onPressed: () {
-                                    _sendPengaduan(
+                                    _sendLaporan(
+                                            widget.title,
                                             userState.id,
                                             kategoriSelected,
                                             divisiSelected,
@@ -333,9 +354,8 @@ class _KlasifikasiState extends State<Klasifikasi> {
                                         .then((value) {
                                       Navigator.pop(context);
                                       ScaffoldMessenger.of(context)
-                                          .showSnackBar(const SnackBar(
-                                        content: Text(
-                                            "Berhasil mengirimkan pengaduan"),
+                                          .showSnackBar(SnackBar(
+                                        content: Text(succesMessage),
                                       ));
                                     }).catchError((error) {
                                       ScaffoldMessenger.of(context)
@@ -344,9 +364,9 @@ class _KlasifikasiState extends State<Klasifikasi> {
                                       ));
                                     });
                                   },
-                                  child: const Text(
-                                    "Kirim Pengaduan",
-                                    style: TextStyle(
+                                  child: Text(
+                                    btnLaporan,
+                                    style: const TextStyle(
                                         color: Color(0xffffffff),
                                         fontSize: 18,
                                         fontFamily: "Poppins",
@@ -382,15 +402,15 @@ Future<Map<String, dynamic>> selectFile() async {
 }
 
 // send informasi
-Future<bool> _sendPengaduan(String id, String kategori, String divisi,
-    String deskripsi, String lampiran, BuildContext ctx) async {
+Future<bool> _sendLaporan(String klasifikasi, String id, String kategori,
+    String divisi, String deskripsi, String lampiran, BuildContext ctx) async {
   if (kategori.isEmpty || divisi.isEmpty || deskripsi.isEmpty) {
     throw "Harap melengkapi informasi";
   }
 
   // send aduan
-  var aduan =
-      http.MultipartRequest("POST", Uri.parse("${dotenv.env['API_HOST']}/"));
+  var aduan = http.MultipartRequest("POST",
+      Uri.parse("${dotenv.env['API_HOST']}/${klasifikasi.toLowerCase()}"));
   aduan.fields["id_user_mobile"] = id;
   aduan.fields["kategori"] = kategori;
   aduan.fields["divisi"] = divisi;
@@ -403,7 +423,7 @@ Future<bool> _sendPengaduan(String id, String kategori, String divisi,
   var result = await aduan.send();
 
   if (result.statusCode != 201) {
-    throw "Gagal mengirim pengaduan";
+    throw "Gagal mengirim $klasifikasi";
   }
 
   return true;

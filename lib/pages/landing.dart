@@ -4,9 +4,7 @@ import 'package:elapor_polije/session/user_state.dart';
 import 'package:flutter/material.dart';
 import 'package:elapor_polije/component/hero_main.dart';
 import 'package:elapor_polije/component/drawer.dart';
-import 'package:elapor_polije/pages/menus/aspirasi.dart';
-import 'package:elapor_polije/pages/menus/informasi.dart';
-import 'package:elapor_polije/pages/menus/pengaduan.dart';
+import 'package:elapor_polije/pages/menus/klasifikasi.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
@@ -58,21 +56,18 @@ class _LandingState extends State<Landing> {
                                   Icons.chat_bubble_outline,
                                   "Pengaduan",
                                   "Laporkan sebuah informasi",
-                                  Pengaduan.nameRoute,
                                   userState),
                               _buildItemKlasifikasi(
                                   context,
                                   Icons.send,
                                   "Aspirasi",
                                   "Kirimkan suara aspirasimu",
-                                  Aspirasi.nameRoute,
                                   userState),
                               _buildItemKlasifikasi(
                                   context,
                                   Icons.info,
                                   "Informasi",
                                   "Dapatkan informasi kampus",
-                                  Informasi.nameRoute,
                                   userState)
                             ],
                           )),
@@ -84,14 +79,23 @@ class _LandingState extends State<Landing> {
   }
 }
 
-Widget _buildItemKlasifikasi(BuildContext ctx, IconData icon, String title,
-    String description, String push, UserStateController userState) {
+Widget _buildItemKlasifikasi(
+    BuildContext ctx,
+    IconData icon,
+    String titleKlasifikasi,
+    String description,
+    UserStateController userState) {
   return Column(
     children: [
       GestureDetector(
         onTap: () {
           _getUserVerifikasiEmail(userState.id).then((value) {
-            Navigator.of(ctx).pushNamed(push);
+            Navigator.push(
+                ctx,
+                MaterialPageRoute(
+                    builder: ((context) => Klasifikasi(
+                          title: titleKlasifikasi,
+                        ))));
           }).catchError((error) {
             ScaffoldMessenger.of(ctx).showSnackBar(SnackBar(
               content: Text(error),
@@ -109,7 +113,7 @@ Widget _buildItemKlasifikasi(BuildContext ctx, IconData icon, String title,
                   leading: Icon(icon,
                       size: 40, color: const Color.fromRGBO(15, 76, 117, 1)),
                   title: Text(
-                    title,
+                    titleKlasifikasi,
                     style: const TextStyle(
                         color: Color.fromRGBO(15, 76, 117, 1),
                         fontWeight: FontWeight.bold,

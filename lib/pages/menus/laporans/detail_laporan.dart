@@ -1,7 +1,4 @@
-// import 'dart:async';
-
 import 'package:dropdown_button2/dropdown_button2.dart';
-import 'package:elapor_polije/pages/menus/informasi.dart';
 import 'package:elapor_polije/pages/menus/laporan.dart';
 import 'package:flutter/material.dart';
 import 'package:elapor_polije/component/hero_main.dart';
@@ -189,7 +186,7 @@ class _DetailLaporanState extends State<DetailLaporan> {
                                         EdgeInsets.zero)),
 
                                 onPressed: () {
-                                  selectFile();
+                                  // selectFile();
                                 },
                                 child: const Text(
                                   'Tampilkan Lampiran',
