@@ -1,8 +1,11 @@
-import 'package:dropdown_button2/dropdown_button2.dart';
-import 'package:elapor_polije/pages/menus/laporan.dart';
+import 'dart:convert';
+
+import 'package:elapor_polije/component/string_extentions.dart';
 import 'package:flutter/material.dart';
 import 'package:elapor_polije/component/hero_main.dart';
 import 'package:elapor_polije/component/drawer.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:http/http.dart' as http;
 
 class DetailLaporan extends StatefulWidget {
   final String id;
@@ -21,22 +24,48 @@ class _DetailLaporanState extends State<DetailLaporan> {
   final TextEditingController status = TextEditingController();
   final TextEditingController dateinput = TextEditingController();
   final TextEditingController deskripsiTanggapan = TextEditingController();
-  // list status
-  final List<String> kategoriItems = [
-    'Kesehatan',
-    'Lingkungan',
-    'Kenyamanan Pembelajaran',
-    'Dan lain-lain'
-  ];
-  String? kategoriSelected;
-  // status
-  final List<String> statusItems = [
-    'Mahasiswa / Mahasiswi',
-    'Dosen',
-    'Staf',
-    'Masyarakat',
-  ];
-  String? statusSelected;
+  String lampiranPengguna = "";
+  String lampiranPetugas = "";
+
+  Future _getLaporan(String id) async {
+    var jenisLaporan = id.replaceAll(RegExp(r'[^A-Z,.]+'), "");
+    var jenisLaporanSelect = jenisLaporan == "ADU"
+        ? "pengaduan"
+        : jenisLaporan == "INFO"
+            ? "informasi"
+            : jenisLaporan == "ASPI"
+                ? "aspirasi"
+                : "";
+    var dataKlasifikasi = await http
+        .get(Uri.parse("${dotenv.env['API_HOST']}/$jenisLaporanSelect/$id"));
+    var response = json.decode(dataKlasifikasi.body);
+    deskripsiPengaduan.text = response["data"]["deskripsi"];
+    kategori.text = response["data"]["kategori"];
+    divisi.text = response["data"]["divisi"];
+    status.text = StringExtentions.ucwords(
+        response["data"]["status"].toString().replaceAll("_", " "));
+    dateinput.text = response["data"]["created_at"];
+    deskripsiTanggapan.text =
+        response["data"]["tanggapan"] ?? "Belum ada tanggapan";
+    if (response['data']['lampiran_pengirim'] != null) {
+      setState(() {
+        lampiranPengguna =
+            "${dotenv.env['BASE_HOST']}/public/upload/assets/document/$jenisLaporanSelect/${response['data']['lampiran_pengirim']}";
+      });
+    }
+    if (response['data']['lampiran'] != null) {
+      setState(() {
+        lampiranPetugas =
+            "${dotenv.env['BASE_HOST']}/public/upload/assets/document/$jenisLaporanSelect/${response['data']['lampiran']}";
+      });
+    }
+  }
+
+  @override
+  void initState() {
+    _getLaporan(widget.id);
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -87,6 +116,7 @@ class _DetailLaporanState extends State<DetailLaporan> {
                               TextField(
                                 controller: deskripsiPengaduan,
                                 maxLines: 8,
+                                readOnly: true,
                                 decoration: InputDecoration(
                                   contentPadding: const EdgeInsets.all(15),
                                   hintText: "Masukkan Deskripsi",
@@ -105,48 +135,14 @@ class _DetailLaporanState extends State<DetailLaporan> {
                               const SizedBox(
                                 height: 10,
                               ),
-                              DropdownButtonFormField2(
-                                searchController: kategori,
+                              TextFormField(
+                                controller: kategori,
+                                readOnly: true,
                                 decoration: InputDecoration(
-                                  isDense: true,
-                                  contentPadding: EdgeInsets.zero,
+                                  hintText: "Kategori",
                                   border: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(6),
-                                  ),
+                                      borderRadius: BorderRadius.circular(5.0)),
                                 ),
-                                isExpanded: true,
-                                hint: const Text(
-                                  'Pilih Jenis Kategori',
-                                  style: TextStyle(fontSize: 15),
-                                ),
-                                icon: const Icon(
-                                  Icons.arrow_drop_down,
-                                  color: Colors.black45,
-                                ),
-                                iconSize: 30,
-                                buttonHeight: 60,
-                                buttonPadding:
-                                    const EdgeInsets.only(left: 20, right: 10),
-                                dropdownDecoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(15),
-                                ),
-                                items: kategoriItems
-                                    .map((item) => DropdownMenuItem<String>(
-                                          value: item,
-                                          child: Text(
-                                            item,
-                                            style: const TextStyle(
-                                              fontSize: 14,
-                                            ),
-                                          ),
-                                        ))
-                                    .toList(),
-                                onChanged: (value) {
-                                  kategoriSelected = value.toString();
-                                },
-                                onSaved: (value) {
-                                  kategoriSelected = value.toString();
-                                },
                               ),
                               const SizedBox(
                                 height: 30,
@@ -161,6 +157,7 @@ class _DetailLaporanState extends State<DetailLaporan> {
                               ),
                               TextFormField(
                                 controller: divisi,
+                                readOnly: true,
                                 decoration: InputDecoration(
                                   hintText: "Ketikkan Tujuan Divisi",
                                   border: OutlineInputBorder(
@@ -186,13 +183,24 @@ class _DetailLaporanState extends State<DetailLaporan> {
                                         EdgeInsets.zero)),
 
                                 onPressed: () {
-                                  // selectFile();
+                                  if (lampiranPengguna != "") {
+                                    showDialog(
+                                        context: context,
+                                        builder: (_) =>
+                                            ImageDialog(lampiranPengguna));
+                                  } else {
+                                    ScaffoldMessenger.of(context)
+                                        .showSnackBar(const SnackBar(
+                                      content: Text("Lampiran tidak tersedia"),
+                                    ));
+                                  }
                                 },
                                 child: const Text(
                                   'Tampilkan Lampiran',
                                   style: TextStyle(
                                       fontSize: 17,
-                                      color: Color.fromARGB(255, 67, 151, 219)),
+                                      color: Color.fromARGB(255, 67, 151, 219),
+                                      fontFamily: "Poppins"),
                                 ),
                               ),
                               const SizedBox(
@@ -207,6 +215,7 @@ class _DetailLaporanState extends State<DetailLaporan> {
                                 height: 10,
                               ),
                               TextFormField(
+                                readOnly: true,
                                 controller: status,
                                 decoration: InputDecoration(
                                   hintText: "Ditangguhkan",
@@ -226,7 +235,8 @@ class _DetailLaporanState extends State<DetailLaporan> {
                                 height: 10,
                               ),
                               TextFormField(
-                                controller: status,
+                                readOnly: true,
+                                controller: dateinput,
                                 decoration: InputDecoration(
                                   hintText: "16:35:05 04-Desember-2022",
                                   border: OutlineInputBorder(
@@ -255,6 +265,7 @@ class _DetailLaporanState extends State<DetailLaporan> {
                                 height: 10,
                               ),
                               TextField(
+                                readOnly: true,
                                 controller: deskripsiTanggapan,
                                 maxLines: 8,
                                 decoration: InputDecoration(
@@ -273,18 +284,29 @@ class _DetailLaporanState extends State<DetailLaporan> {
                                     fontFamily: 'Poppins', fontSize: 17),
                               ),
                               TextButton(
-                                // statesController: lampiranTanggapan,
                                 style: const ButtonStyle(
                                     alignment: Alignment.centerLeft,
                                     padding: MaterialStatePropertyAll(
                                         EdgeInsets.zero)),
-                                // controller: _passwordController,
-                                onPressed: () {},
+                                onPressed: () {
+                                  if (lampiranPetugas != "") {
+                                    showDialog(
+                                        context: context,
+                                        builder: (_) =>
+                                            ImageDialog(lampiranPetugas));
+                                  } else {
+                                    ScaffoldMessenger.of(context)
+                                        .showSnackBar(const SnackBar(
+                                      content: Text("Lampiran tidak tersedia"),
+                                    ));
+                                  }
+                                },
                                 child: const Text(
                                   'Tampilkan Lampiran',
                                   style: TextStyle(
                                       fontSize: 17,
-                                      color: Color.fromARGB(255, 67, 151, 219)),
+                                      color: Color.fromARGB(255, 67, 151, 219),
+                                      fontFamily: "Poppins"),
                                 ),
                               ),
                               const SizedBox(
@@ -306,20 +328,7 @@ class _DetailLaporanState extends State<DetailLaporan> {
                                       ),
                                     ),
                                     onPressed: () {
-                                      if (submitlaporanedit(
-                                          deskripsiPengaduan.text,
-                                          kategoriSelected.toString(),
-                                          divisi.text,
-                                          status.text,
-                                          dateinput.text,
-                                          deskripsiTanggapan.text)) {
-                                        Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                              builder: (context) =>
-                                                  const Laporan()),
-                                        );
-                                      }
+                                      Navigator.pop(context);
                                     },
                                     child: const Icon(
                                       Icons.arrow_back,
@@ -341,7 +350,13 @@ class _DetailLaporanState extends State<DetailLaporan> {
   }
 }
 
-submitlaporanedit(String deskripsiPengaduan, String kategori, String divisi,
-    String status, String dateinput, String deskripsiTanggapan) {
-  return true;
+class ImageDialog extends StatelessWidget {
+  final String link;
+  const ImageDialog(this.link, {Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Dialog(
+        child: Image.network(link, width: 800, height: 600, fit: BoxFit.cover));
+  }
 }

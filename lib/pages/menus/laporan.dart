@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:dropdown_button2/dropdown_button2.dart';
+import 'package:elapor_polije/pages/menus/laporans/detail_laporan.dart';
 import 'package:elapor_polije/session/user_state.dart';
 import 'package:flutter/material.dart';
 import 'package:elapor_polije/component/hero_main.dart';
@@ -7,6 +8,7 @@ import 'package:elapor_polije/component/drawer.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
+import 'package:elapor_polije/component/string_extentions.dart';
 
 class Laporan extends StatefulWidget {
   const Laporan({Key? key}) : super(key: key);
@@ -131,6 +133,19 @@ class _LaporanState extends State<Laporan> {
                                   : ListView.builder(
                                       itemCount: _getLaporan.length,
                                       itemBuilder: (context, index) {
+                                        var status = _getLaporan[index]
+                                                ["status"]
+                                            .toString()
+                                            .replaceAll("_", " ");
+                                        Color warnaStatus =
+                                            status == "belum ditanggapi"
+                                                ? const Color.fromARGB(
+                                                    255, 167, 167, 0)
+                                                : status == "proses"
+                                                    ? Colors.blueAccent
+                                                    : status == "ditangguhkan"
+                                                        ? Colors.red
+                                                        : Colors.green;
                                         return Padding(
                                           padding:
                                               const EdgeInsets.only(bottom: 20),
@@ -175,16 +190,10 @@ class _LaporanState extends State<Laporan> {
                                                     ),
                                                     const SizedBox(height: 5),
                                                     Text(
-                                                      _getLaporan[index]
-                                                              ["status"]
-                                                          .toString()
-                                                          .replaceAll("_", " "),
-                                                      style: const TextStyle(
-                                                          color: Color.fromARGB(
-                                                              255,
-                                                              192,
-                                                              190,
-                                                              78),
+                                                      StringExtentions.ucwords(
+                                                          status),
+                                                      style: TextStyle(
+                                                          color: warnaStatus,
                                                           fontWeight:
                                                               FontWeight.w400,
                                                           fontSize: 12,
@@ -214,13 +223,15 @@ class _LaporanState extends State<Laporan> {
                                                           ),
                                                         ),
                                                         onPressed: () {
-                                                          // Navigator.push(
-                                                          //   context,
-                                                          //   MaterialPageRoute(
-                                                          //       builder: (context) =>
-                                                          //           const DetailLaporan(
-                                                          //               id: "ADU1992112335")),
-                                                          // );
+                                                          Navigator.push(
+                                                            context,
+                                                            MaterialPageRoute(
+                                                                builder: (context) =>
+                                                                    DetailLaporan(
+                                                                        id: _getLaporan[index]
+                                                                            [
+                                                                            "id"])),
+                                                          );
                                                         },
                                                         child: const Text(
                                                           'Detail',

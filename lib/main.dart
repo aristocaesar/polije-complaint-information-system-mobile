@@ -22,7 +22,6 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Polije Complaint Information System',
       debugShowCheckedModeBanner: false,
       home: const SplashScreen(),
       routes: {
