@@ -28,6 +28,13 @@ class _LoginState extends State<Login> {
   final _passwordController = TextEditingController();
   @override
   Widget build(BuildContext context) {
+    Session().get("id").then((value) {
+      if (value != "null") {
+        Session().restoreSession();
+        Navigator.of(context).pop();
+        Navigator.of(context).pushReplacementNamed(Landing.nameRoute);
+      }
+    });
     return Scaffold(
         body: Container(
             decoration: const BoxDecoration(
@@ -146,28 +153,26 @@ class _LoginState extends State<Login> {
                                         borderRadius: BorderRadius.circular(8),
                                       ),
                                     ),
-                                    onPressed: () async {
-                                      try {
-                                        if (await _loginSubmit(
-                                            _emailController.text,
-                                            _passwordController.text,
-                                            userState)) {
-                                          // ignore: use_build_context_synchronously
-                                          ScaffoldMessenger.of(context)
-                                              .showSnackBar(SnackBar(
-                                            content: Text(
-                                                "Hallo, ${userState.namaLengkap.toString()}"),
-                                          ));
-                                          // ignore: use_build_context_synchronously
-                                          Navigator.of(context)
-                                              .pushNamed(Landing.nameRoute);
-                                        }
-                                      } catch (e) {
+                                    onPressed: () {
+                                      _loginSubmit(
+                                              _emailController.text,
+                                              _passwordController.text,
+                                              userState)
+                                          .then((value) {
+                                        Navigator.of(context)
+                                            .pushReplacementNamed(
+                                                Landing.nameRoute);
                                         ScaffoldMessenger.of(context)
                                             .showSnackBar(SnackBar(
-                                          content: Text(e.toString()),
+                                          content: Text(
+                                              "Hallo, ${userState.namaLengkap.toString()}"),
                                         ));
-                                      }
+                                      }).catchError((value) {
+                                        ScaffoldMessenger.of(context)
+                                            .showSnackBar(SnackBar(
+                                          content: Text(value),
+                                        ));
+                                      });
                                     },
                                     child: const Text(
                                       "Masuk",
@@ -252,7 +257,8 @@ Future<bool> _loginSubmit(
       "nama": user["nama"],
       "email": user["email"],
       "foto":
-          "${dotenv.env['BASE_HOST']}/public/upload/assets/images/${user['foto']}"
+          "${dotenv.env['BASE_HOST']}/public/upload/assets/images/${user['foto']}",
+      "verifikasi_email": user["verifikasi_email"]
     });
     return true;
   } else {

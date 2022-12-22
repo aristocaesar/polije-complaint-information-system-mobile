@@ -29,6 +29,9 @@ class _SettingState extends State<Setting> {
   // init scafold -> drawer
   final _scaffoldKey = GlobalKey<ScaffoldState>();
 
+  // user data
+  bool hasUserData = false;
+
   // input controller
   final TextEditingController namaLengkapControl = TextEditingController();
   final TextEditingController dateinput = TextEditingController();
@@ -63,9 +66,17 @@ class _SettingState extends State<Setting> {
         await http.get(Uri.parse("${dotenv.env['API_HOST']}/pengguna/$id"));
     var result = json.decode(response.body);
     setState(() {
+      hasUserData = true;
       getUserVerifikasi = result["data"]["verifikasi_email"];
     });
-    return result["data"];
+    namaLengkapControl.text = result["data"]["nama"];
+    dateinput.text = result["data"]["tgl_lahir"];
+  }
+
+  @override
+  void initState() {
+    getUser();
+    super.initState();
   }
 
   @override
@@ -94,53 +105,8 @@ class _SettingState extends State<Setting> {
                       child: Padding(
                           padding: const EdgeInsets.only(
                               top: 20.0, right: 20.0, left: 20.0),
-                          child: FutureBuilder(
-                            future: getUser(),
-                            builder:
-                                (BuildContext context, AsyncSnapshot snapshot) {
-                              if (snapshot.hasData) {
-                                namaLengkapControl.text = snapshot.data["nama"];
-                                dateinput.text = snapshot.data["tgl_lahir"];
-                                jenisKelaminSelected = snapshot
-                                    .data["jenis_kelamin"]
-                                    .toString()
-                                    .toLowerCase();
-                                var jenisKelaminSelectedUser =
-                                    (snapshot.data["jenis_kelamin"] ==
-                                            "laki-laki"
-                                        ? "Laki-Laki"
-                                        : "Perempuan");
-                                alamatControl.text = snapshot.data["alamat"];
-                                kontakControl.text = snapshot.data["kontak"];
-                                emailControl.text = snapshot.data["email"] +
-                                    " - " +
-                                    snapshot.data["verifikasi_email"]
-                                        .toString()
-                                        .replaceAll("_", " ")
-                                        .capitalize;
-                                statusSelected = snapshot.data["status"]
-                                    .toString()
-                                    .toLowerCase()
-                                    .replaceAll("_", "/");
-                                switch (snapshot.data["status"]) {
-                                  case "mahasiswa_mahasiswi":
-                                    statusSelected = "Mahasiswa/Mahasiswi";
-                                    break;
-                                  case "dosen":
-                                    statusSelected = "Dosen";
-                                    break;
-                                  case "staf":
-                                    statusSelected = "Staf";
-                                    break;
-                                  case "masyarakat":
-                                    statusSelected = "Masyarakat";
-                                    break;
-                                  default:
-                                }
-                                recentActivityControl.text =
-                                    snapshot.data["last_login"];
-
-                                return ListView(
+                          child: hasUserData
+                              ? ListView(
                                   children: [
                                     // Nama Lengkap
                                     const Text(
@@ -216,7 +182,7 @@ class _SettingState extends State<Setting> {
                                       height: 10,
                                     ),
                                     DropdownButtonFormField2(
-                                      value: jenisKelaminSelectedUser,
+                                      value: "Laki-Laki",
                                       decoration: InputDecoration(
                                         isDense: true,
                                         contentPadding: EdgeInsets.zero,
@@ -471,7 +437,9 @@ class _SettingState extends State<Setting> {
                                           maxRadius: 70,
                                           child: ClipOval(
                                             child: Image.network(
-                                              "${dotenv.env['BASE_HOST']}/public/upload/assets/images/${snapshot.data['foto']}",
+                                              "${dotenv.env['BASE_HOST']}/public/upload/assets/images/${[
+                                                'foto'
+                                              ]}",
                                               fit: BoxFit.cover,
                                             ),
                                           ),
@@ -588,9 +556,8 @@ class _SettingState extends State<Setting> {
                                       height: 80,
                                     ),
                                   ],
-                                );
-                              } else {
-                                return ListView(children: const [
+                                )
+                              : ListView(children: const [
                                   Center(
                                     child: Text(
                                       "Sedang Memuat ...",
@@ -600,10 +567,7 @@ class _SettingState extends State<Setting> {
                                           fontSize: 18),
                                     ),
                                   ),
-                                ]);
-                              }
-                            },
-                          )),
+                                ])),
                     ),
                   ),
                 ),
@@ -682,7 +646,7 @@ Future<bool> _simpanPerubahan(String id, String nama, String tglLahir,
   data["jenis_kelamin"] = jenisKelamin;
   data["alamat"] = alamat;
   data["kontak"] = kontak;
-  data["status"] = status.replaceAll("/", "_");
+  data["status"] = status.replaceAll("/", "_").toLowerCase();
 
   var response = await http
       .post(Uri.parse("${dotenv.env['API_HOST']}/pengguna/update"), body: data);
@@ -692,3 +656,42 @@ Future<bool> _simpanPerubahan(String id, String nama, String tglLahir,
   }
   return true;
 }
+
+  // jenisKelaminSelected = snapshot
+  //     .data["jenis_kelamin"]
+  //     .toString()
+  //     .toLowerCase();
+  // var jenisKelaminSelectedUser =
+  //     (snapshot.data["jenis_kelamin"] ==
+  //             "laki-laki"
+  //         ? "Laki-Laki"
+  //         : "Perempuan");
+  // alamatControl.text = snapshot.data["alamat"];
+  // kontakControl.text = snapshot.data["kontak"];
+  // emailControl.text = snapshot.data["email"] +
+  //     " - " +
+  //     snapshot.data["verifikasi_email"]
+  //         .toString()
+  //         .replaceAll("_", " ")
+  //         .capitalize;
+  // statusSelected = snapshot.data["status"]
+  //     .toString()
+  //     .toLowerCase()
+  //     .replaceAll("_", "/");
+  // switch (snapshot.data["status"]) {
+  //   case "mahasiswa_mahasiswi":
+  //     statusSelected = "Mahasiswa/Mahasiswi";
+  //     break;
+  //   case "dosen":
+  //     statusSelected = "Dosen";
+  //     break;
+  //   case "staf":
+  //     statusSelected = "Staf";
+  //     break;
+  //   case "masyarakat":
+  //     statusSelected = "Masyarakat";
+  //     break;
+  //   default:
+  // }
+  // recentActivityControl.text =
+  //     snapshot.data["last_login"];

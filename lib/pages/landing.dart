@@ -1,5 +1,7 @@
 import 'dart:convert';
 
+// import 'package:elapor_polije/pages/auth/login.dart';
+// import 'package:elapor_polije/session/session.dart';
 import 'package:elapor_polije/session/user_state.dart';
 import 'package:flutter/material.dart';
 import 'package:elapor_polije/component/hero_main.dart';
@@ -25,6 +27,12 @@ class _LandingState extends State<Landing> {
 
   @override
   Widget build(BuildContext context) {
+    // Session().get("id").then((value) {
+    //   if (value == "null") {
+    //     Session().restoreSession();
+    //     Navigator.of(context).pushReplacementNamed(Login.nameRoute);
+    //   }
+    // });
     return Scaffold(
         key: _scaffoldKey,
         drawer: const DrawerComponent(),
