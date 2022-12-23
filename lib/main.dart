@@ -12,7 +12,7 @@ import 'package:elapor_polije/component/splash_screen.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 void main() async {
-  // WidgetsFlutterBinding.ensureInitialized();
+  WidgetsFlutterBinding.ensureInitialized();
   await dotenv.load(fileName: "assets/.env");
   runApp(const MyApp());
 }

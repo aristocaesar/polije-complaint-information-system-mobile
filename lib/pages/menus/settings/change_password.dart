@@ -114,19 +114,6 @@ class _ChangePasswordState extends State<ChangePassword> {
                                 ),
                               ),
                               const SizedBox(height: 30),
-                              const Text(
-                                'Perhatikan',
-                                style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    fontFamily: 'Poppins',
-                                    fontSize: 18),
-                              ),
-                              const SizedBox(height: 10),
-                              const Text(
-                                  "Setelah anda mengklik simpan, anda akan otomatis logout.",
-                                  style: TextStyle(
-                                      fontFamily: 'Poppins', fontSize: 16)),
-                              const SizedBox(height: 30),
                               SizedBox(
                                 width: 200,
                                 height: 60,
@@ -148,7 +135,7 @@ class _ChangePasswordState extends State<ChangePassword> {
                                       ScaffoldMessenger.of(context)
                                           .showSnackBar(const SnackBar(
                                         content: Text(
-                                            'Password berhasil diperbarui, anda'),
+                                            'Password berhasil diperbarui'),
                                       ));
                                       Navigator.pop(context);
                                     }).catchError((error) {
