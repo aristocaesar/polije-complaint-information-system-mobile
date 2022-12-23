@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:dropdown_button2/dropdown_button2.dart';
+import 'package:elapor_polije/session/session.dart';
 import 'package:elapor_polije/session/user_state.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
@@ -29,6 +30,9 @@ class _SettingState extends State<Setting> {
   // init scafold -> drawer
   final _scaffoldKey = GlobalKey<ScaffoldState>();
 
+  // user data
+  bool hasUserData = false;
+
   // input controller
   final TextEditingController namaLengkapControl = TextEditingController();
   final TextEditingController dateinput = TextEditingController();
@@ -39,6 +43,7 @@ class _SettingState extends State<Setting> {
 
 // status verifikasi
   String getUserVerifikasi = "terverifikasi";
+  Image showImage = Image.asset("assets/images/USER-default.png");
 
   // status
   final List<String> statusItems = [
@@ -63,9 +68,43 @@ class _SettingState extends State<Setting> {
         await http.get(Uri.parse("${dotenv.env['API_HOST']}/pengguna/$id"));
     var result = json.decode(response.body);
     setState(() {
+      // set has user data
+      hasUserData = true;
+      // jenis kelamin
+      jenisKelaminSelected = result["data"]["jenis_kelamin"]
+          .toString()
+          .toLowerCase()
+          .split("-")
+          .map((e) => "${e[0].toUpperCase()}${e.substring(1)}")
+          .join("-");
+      // set status
+      statusSelected = result["data"]["status"]
+          .toString()
+          .toLowerCase()
+          .split("_")
+          .map((e) => "${e[0].toUpperCase()}${e.substring(1)}")
+          .join("/");
+      // set email verifikasi
       getUserVerifikasi = result["data"]["verifikasi_email"];
+      // set foto
+      var foto = result["data"]["foto"];
+      showImage = Image.network(
+        "${dotenv.env['BASE_HOST']}/public/upload/assets/images/$foto",
+        fit: BoxFit.cover,
+      );
     });
-    return result["data"];
+    namaLengkapControl.text = result["data"]["nama"];
+    dateinput.text = result["data"]["tgl_lahir"];
+    alamatControl.text = result["data"]["alamat"];
+    kontakControl.text = result["data"]["kontak"];
+    emailControl.text = result["data"]["email"];
+    recentActivityControl.text = result["data"]["last_login"];
+  }
+
+  @override
+  void initState() {
+    getUser();
+    super.initState();
   }
 
   @override
@@ -94,53 +133,8 @@ class _SettingState extends State<Setting> {
                       child: Padding(
                           padding: const EdgeInsets.only(
                               top: 20.0, right: 20.0, left: 20.0),
-                          child: FutureBuilder(
-                            future: getUser(),
-                            builder:
-                                (BuildContext context, AsyncSnapshot snapshot) {
-                              if (snapshot.hasData) {
-                                namaLengkapControl.text = snapshot.data["nama"];
-                                dateinput.text = snapshot.data["tgl_lahir"];
-                                jenisKelaminSelected = snapshot
-                                    .data["jenis_kelamin"]
-                                    .toString()
-                                    .toLowerCase();
-                                var jenisKelaminSelectedUser =
-                                    (snapshot.data["jenis_kelamin"] ==
-                                            "laki-laki"
-                                        ? "Laki-Laki"
-                                        : "Perempuan");
-                                alamatControl.text = snapshot.data["alamat"];
-                                kontakControl.text = snapshot.data["kontak"];
-                                emailControl.text = snapshot.data["email"] +
-                                    " - " +
-                                    snapshot.data["verifikasi_email"]
-                                        .toString()
-                                        .replaceAll("_", " ")
-                                        .capitalize;
-                                statusSelected = snapshot.data["status"]
-                                    .toString()
-                                    .toLowerCase()
-                                    .replaceAll("_", "/");
-                                switch (snapshot.data["status"]) {
-                                  case "mahasiswa_mahasiswi":
-                                    statusSelected = "Mahasiswa/Mahasiswi";
-                                    break;
-                                  case "dosen":
-                                    statusSelected = "Dosen";
-                                    break;
-                                  case "staf":
-                                    statusSelected = "Staf";
-                                    break;
-                                  case "masyarakat":
-                                    statusSelected = "Masyarakat";
-                                    break;
-                                  default:
-                                }
-                                recentActivityControl.text =
-                                    snapshot.data["last_login"];
-
-                                return ListView(
+                          child: hasUserData
+                              ? ListView(
                                   children: [
                                     // Nama Lengkap
                                     const Text(
@@ -216,7 +210,7 @@ class _SettingState extends State<Setting> {
                                       height: 10,
                                     ),
                                     DropdownButtonFormField2(
-                                      value: jenisKelaminSelectedUser,
+                                      value: jenisKelaminSelected,
                                       decoration: InputDecoration(
                                         isDense: true,
                                         contentPadding: EdgeInsets.zero,
@@ -470,17 +464,33 @@ class _SettingState extends State<Setting> {
                                         child: CircleAvatar(
                                           maxRadius: 70,
                                           child: ClipOval(
-                                            child: Image.network(
-                                              "${dotenv.env['BASE_HOST']}/public/upload/assets/images/${snapshot.data['foto']}",
-                                              fit: BoxFit.cover,
-                                            ),
+                                            child: showImage,
                                           ),
                                         ),
                                       ),
                                       Expanded(
                                         child: TextButton(
                                           onPressed: () {
-                                            selectFile(userState);
+                                            updateFoto(userState).then((foto) {
+                                              // set new state & session
+                                              var newFoto =
+                                                  "${dotenv.env['BASE_HOST']}/public/upload/assets/images/$foto";
+                                              Session().setSession(
+                                                  {"foto": newFoto});
+                                              userState.foto = newFoto;
+                                              Navigator.pushReplacementNamed(
+                                                  context, Setting.nameRoute);
+                                              ScaffoldMessenger.of(context)
+                                                  .showSnackBar(const SnackBar(
+                                                content: Text(
+                                                    "Berhasil memperbarui foto profil"),
+                                              ));
+                                            }).catchError((error) {
+                                              ScaffoldMessenger.of(context)
+                                                  .showSnackBar(SnackBar(
+                                                content: Text(error.toString()),
+                                              ));
+                                            });
                                           },
                                           style: ElevatedButton.styleFrom(
                                             backgroundColor:
@@ -545,7 +555,7 @@ class _SettingState extends State<Setting> {
                                         onPressed: () {
                                           try {
                                             _simpanPerubahan(
-                                                    userState.id,
+                                                    userState,
                                                     namaLengkapControl.text,
                                                     dateinput.text,
                                                     jenisKelaminSelected
@@ -554,13 +564,8 @@ class _SettingState extends State<Setting> {
                                                     kontakControl.text,
                                                     statusSelected.toString())
                                                 .then((value) {
-                                              Navigator.pop(context);
-                                              Navigator.push(
-                                                context,
-                                                MaterialPageRoute(
-                                                    builder: (context) =>
-                                                        const Setting()),
-                                              );
+                                              Navigator.pushReplacementNamed(
+                                                  context, Setting.nameRoute);
                                               ScaffoldMessenger.of(context)
                                                   .showSnackBar(const SnackBar(
                                                 content: Text(
@@ -588,9 +593,8 @@ class _SettingState extends State<Setting> {
                                       height: 80,
                                     ),
                                   ],
-                                );
-                              } else {
-                                return ListView(children: const [
+                                )
+                              : ListView(children: const [
                                   Center(
                                     child: Text(
                                       "Sedang Memuat ...",
@@ -600,10 +604,7 @@ class _SettingState extends State<Setting> {
                                           fontSize: 18),
                                     ),
                                   ),
-                                ]);
-                              }
-                            },
-                          )),
+                                ])),
                     ),
                   ),
                 ),
@@ -613,9 +614,9 @@ class _SettingState extends State<Setting> {
 }
 
 //fungsi untuk select file
-selectFile(UserStateController userState) async {
+Future updateFoto(UserStateController userState) async {
   FilePickerResult? result = await FilePicker.platform.pickFiles(
-      type: FileType.custom, allowedExtensions: ["jpeg", "png", "jpg"]);
+      type: FileType.custom, allowedExtensions: ['jpg', 'jpeg', 'png']);
   if (result != null) {
     PlatformFile file = result.files.first;
     var request = http.MultipartRequest(
@@ -624,11 +625,14 @@ selectFile(UserStateController userState) async {
     request.files
         .add(await http.MultipartFile.fromPath("foto", file.path.toString()));
     var response = await request.send();
+    var responseMsg = json.decode(await response.stream.bytesToString());
     if (response.statusCode == 200) {
-      return true;
+      return responseMsg["data"]["new_foto"];
     } else {
-      throw "Gagal memperbarui foto profil";
+      throw responseMsg["data"]["message"];
     }
+  } else {
+    throw "Foto profil tidak diperbarui";
   }
 }
 
@@ -668,21 +672,27 @@ Widget _kirimUlangVerifikasi(BuildContext ctx, String userVerifikasi) {
   }
 }
 
-Future<bool> _simpanPerubahan(String id, String nama, String tglLahir,
-    String jenisKelamin, String alamat, String kontak, String status) async {
+Future<bool> _simpanPerubahan(
+    UserStateController userState,
+    String nama,
+    String tglLahir,
+    String jenisKelamin,
+    String alamat,
+    String kontak,
+    String status) async {
   // check empty data
   if (nama.isEmpty || kontak.isEmpty) {
     throw "Harap melengkapi data profile";
   }
 
   var data = <String, dynamic>{};
-  data["id_user_mobile"] = id;
+  data["id_user_mobile"] = userState.id;
   data["nama"] = nama;
   data["tgl_lahir"] = tglLahir;
   data["jenis_kelamin"] = jenisKelamin;
   data["alamat"] = alamat;
   data["kontak"] = kontak;
-  data["status"] = status.replaceAll("/", "_");
+  data["status"] = status.replaceAll("/", "_").toLowerCase();
 
   var response = await http
       .post(Uri.parse("${dotenv.env['API_HOST']}/pengguna/update"), body: data);
@@ -690,5 +700,7 @@ Future<bool> _simpanPerubahan(String id, String nama, String tglLahir,
   if (result["status"] == "ERR") {
     throw result["data"]["message"];
   }
+  // change state nama
+  userState.namaLengkap = nama;
   return true;
 }

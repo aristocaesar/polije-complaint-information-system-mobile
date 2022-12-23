@@ -1,9 +1,9 @@
+import 'package:elapor_polije/pages/auth/login.dart';
 import 'package:elapor_polije/pages/menus/laporan.dart';
 import 'package:elapor_polije/pages/menus/setting.dart';
 import 'package:elapor_polije/session/session.dart';
 import 'package:elapor_polije/session/user_state.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:elapor_polije/pages/landing.dart';
 import 'package:elapor_polije/pages/menus/about.dart';
 import 'package:get/get.dart';
@@ -16,10 +16,6 @@ class DrawerComponent extends StatefulWidget {
 }
 
 class _DrawerComponentState extends State<DrawerComponent> {
-  String nama = "";
-  String email = "";
-  String foto = "https://demo.getstisla.com/assets/img/avatar/avatar-1.png";
-
   @override
   Widget build(BuildContext context) {
     return Drawer(
@@ -34,10 +30,12 @@ class _DrawerComponentState extends State<DrawerComponent> {
               ),
               currentAccountPicture: CircleAvatar(
                 child: ClipOval(
-                  child: Image.network(
-                    controller.foto,
-                    fit: BoxFit.cover,
-                  ),
+                  child: controller.foto != ""
+                      ? Image.network(
+                          controller.foto,
+                          fit: BoxFit.cover,
+                        )
+                      : Image.asset("assets/images/USER-default.png"),
                 ),
               ),
               accountName: Text(
@@ -65,7 +63,7 @@ class _DrawerComponentState extends State<DrawerComponent> {
               leading: const Icon(Icons.layers),
               onTap: () async {
                 Navigator.pop(context);
-                Navigator.of(context).pushNamed(Landing.nameRoute);
+                Navigator.of(context).pushReplacementNamed(Landing.nameRoute);
               },
             ),
             ListTile(
@@ -76,7 +74,7 @@ class _DrawerComponentState extends State<DrawerComponent> {
               leading: const Icon(Icons.archive),
               onTap: () {
                 Navigator.pop(context);
-                Navigator.of(context).pushNamed(Laporan.nameRoute);
+                Navigator.of(context).pushReplacementNamed(Laporan.nameRoute);
               },
             ),
             ListTile(
@@ -96,17 +94,16 @@ class _DrawerComponentState extends State<DrawerComponent> {
                   style: TextStyle(fontFamily: "Poppins")),
               leading: const Icon(Icons.info),
               onTap: () {
-                Navigator.pop(context);
-                Navigator.of(context).pushNamed(About.nameRoute);
+                Navigator.of(context).pushReplacementNamed(About.nameRoute);
               },
             ),
             ListTile(
               title:
                   const Text('Keluar', style: TextStyle(fontFamily: "Poppins")),
               leading: const Icon(Icons.exit_to_app),
-              onTap: () async {
-                await Session().destroySession();
-                SystemNavigator.pop();
+              onTap: () {
+                Navigator.of(context).pushReplacementNamed(Login.nameRoute);
+                Session().destroySession();
               },
             ),
           ],

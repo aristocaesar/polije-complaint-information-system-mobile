@@ -10,7 +10,6 @@ import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 
 class Klasifikasi extends StatefulWidget {
-  static const nameRoute = "/klasifikasi";
   final String title;
   const Klasifikasi({Key? key, required this.title}) : super(key: key);
 
