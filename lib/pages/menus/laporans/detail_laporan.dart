@@ -1,7 +1,4 @@
-// import 'dart:async';
-
 import 'package:dropdown_button2/dropdown_button2.dart';
-import 'package:elapor_polije/pages/menus/informasi.dart';
 import 'package:elapor_polije/pages/menus/laporan.dart';
 import 'package:flutter/material.dart';
 import 'package:elapor_polije/component/hero_main.dart';
@@ -18,7 +15,6 @@ class DetailLaporan extends StatefulWidget {
 class _DetailLaporanState extends State<DetailLaporan> {
   final _scaffoldKey = GlobalKey<ScaffoldState>();
   //form state
-  final TextEditingController judul = TextEditingController();
   final TextEditingController deskripsiPengaduan = TextEditingController();
   final TextEditingController kategori = TextEditingController();
   final TextEditingController divisi = TextEditingController();
@@ -76,24 +72,6 @@ class _DetailLaporanState extends State<DetailLaporan> {
                                     fontWeight: FontWeight.bold,
                                     fontFamily: 'Poppins',
                                     fontSize: 17),
-                              ),
-                              const SizedBox(height: 10),
-                              const Text(
-                                "Judul",
-                                style: TextStyle(
-                                    fontFamily: 'Poppins', fontSize: 17),
-                              ),
-                              const SizedBox(
-                                height: 10,
-                              ),
-                              TextFormField(
-                                controller: judul,
-                                decoration: InputDecoration(
-                                  contentPadding: const EdgeInsets.all(15),
-                                  hintText: "Ketikkan Judul",
-                                  border: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(5.0)),
-                                ),
                               ),
                               const SizedBox(
                                 height: 30,
@@ -208,7 +186,7 @@ class _DetailLaporanState extends State<DetailLaporan> {
                                         EdgeInsets.zero)),
 
                                 onPressed: () {
-                                  selectFile();
+                                  // selectFile();
                                 },
                                 child: const Text(
                                   'Tampilkan Lampiran',
@@ -329,7 +307,6 @@ class _DetailLaporanState extends State<DetailLaporan> {
                                     ),
                                     onPressed: () {
                                       if (submitlaporanedit(
-                                          judul.text,
                                           deskripsiPengaduan.text,
                                           kategoriSelected.toString(),
                                           divisi.text,
@@ -364,29 +341,7 @@ class _DetailLaporanState extends State<DetailLaporan> {
   }
 }
 
-// Future pickDateTime() async {
-//   DateTime? date = await pickDate();
-//   if (date == null) return;
-// }
-
-// Future<DateTime?> pickDate() => showDatePicker(
-//     context: context,
-//     initialDate: DateTime.now(),
-//     firstDate: DateTime(2000),
-//     lastDate: (2100));
-// //
-// future<TimeOfDay?> pickTime() => showTimePicker(
-//   context: context,
-//   initialTime: TimeOfDay(hour: hour, minute: minute, second))
-
-submitlaporanedit(String judul, String deskripsiPengaduan, String kategori,
-    String divisi, String status, String dateinput, String deskripsiTanggapan) {
-  // print(judul);
-  // print(deskripsiPengaduan);
-  // print(kategori);
-  // print(divisi);
-  // print(status);
-  // print(dateinput);
-  // print(deskripsiTanggapan);
+submitlaporanedit(String deskripsiPengaduan, String kategori, String divisi,
+    String status, String dateinput, String deskripsiTanggapan) {
   return true;
 }

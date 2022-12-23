@@ -1,8 +1,12 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:intl/intl.dart';
 import 'dart:async';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:elapor_polije/pages/auth/login.dart';
+import "package:http/http.dart" as http;
 
 class Register extends StatefulWidget {
   static const nameRoute = "/register";
@@ -21,6 +25,7 @@ class _RegisterState extends State<Register> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _password2Controller = TextEditingController();
+  final TextEditingController _kontakController = TextEditingController();
   final TextEditingController dateinput = TextEditingController();
   // jenis kelamin
   final List<String> genderItems = [
@@ -132,7 +137,7 @@ class _RegisterState extends State<Register> {
 
                                     if (pickedDate != null) {
                                       String formattedDate =
-                                          DateFormat('dd-MM-yyyy')
+                                          DateFormat('yyyy-MM-dd')
                                               .format(pickedDate);
                                       setState(() {
                                         dateinput.text =
@@ -266,6 +271,28 @@ class _RegisterState extends State<Register> {
                                   height: 30,
                                 ),
                                 const Text(
+                                  "No Telp",
+                                  style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontFamily: 'Poppins',
+                                      fontSize: 18),
+                                ),
+                                const SizedBox(
+                                  height: 10,
+                                ),
+                                TextFormField(
+                                  controller: _kontakController,
+                                  decoration: InputDecoration(
+                                    hintText: "Ketikkan No Telp",
+                                    border: OutlineInputBorder(
+                                        borderRadius:
+                                            BorderRadius.circular(5.0)),
+                                  ),
+                                ),
+                                const SizedBox(
+                                  height: 30,
+                                ),
+                                const Text(
                                   "Status",
                                   style: TextStyle(
                                       fontWeight: FontWeight.bold,
@@ -331,24 +358,33 @@ class _RegisterState extends State<Register> {
                                         borderRadius: BorderRadius.circular(8),
                                       ),
                                     ),
-                                    onPressed: () {
-                                      if (_registerSubmit(
-                                          _namaController.text,
-                                          dateinput.text,
-                                          genderSelected.toString(),
-                                          _emailController.text,
-                                          _passwordController.text,
-                                          _password2Controller.text,
-                                          statusSelected.toString())) {
+                                    onPressed: () async {
+                                      try {
+                                        if (await _registerSubmit(
+                                            _namaController.text,
+                                            dateinput.text,
+                                            genderSelected.toString(),
+                                            _emailController.text,
+                                            _passwordController.text,
+                                            _password2Controller.text,
+                                            _kontakController.text,
+                                            statusSelected.toString())) {
+                                          // ignore: use_build_context_synchronously
+                                          ScaffoldMessenger.of(context)
+                                              .showSnackBar(const SnackBar(
+                                            content: Text(
+                                                'Berhasil Registrasi, Silakan Verifikasi dan Login'),
+                                          ));
+                                          Timer(
+                                              const Duration(seconds: 2),
+                                              () => Navigator.of(context)
+                                                  .pushNamed(Login.nameRoute));
+                                        }
+                                      } catch (e) {
                                         ScaffoldMessenger.of(context)
-                                            .showSnackBar(const SnackBar(
-                                          content: Text(
-                                              'Berhasil Registrasi, Silakan Verifikasi dan Login'),
+                                            .showSnackBar(SnackBar(
+                                          content: Text(e.toString()),
                                         ));
-                                        Timer(
-                                            const Duration(seconds: 2),
-                                            () => Navigator.of(context)
-                                                .pushNamed(Login.nameRoute));
                                       }
                                     },
                                     child: const Text(
@@ -409,13 +445,55 @@ class _RegisterState extends State<Register> {
   }
 }
 
-_registerSubmit(String namaLengkap, String tanggalLahir, String jenisKelamin,
-    String email, String password, String password2, String status) {
-  // print(namaLengkap);
-  // print(tanggalLahir);
-  // print(jenisKelamin);
-  // print(email);
-  // print(password);
-  // print(status);
-  return true;
+Future<bool> _registerSubmit(
+    String namaLengkap,
+    String tanggalLahir,
+    String jenisKelamin,
+    String email,
+    String password,
+    String password2,
+    String kontak,
+    String status) async {
+  if (namaLengkap.isNotEmpty &&
+      tanggalLahir.isNotEmpty &&
+      jenisKelamin != "null" &&
+      email.isNotEmpty &&
+      password.isNotEmpty &&
+      password2.isNotEmpty &&
+      kontak.isNotEmpty &&
+      status != "null") {
+    // check valid email
+    final bool emailValid = RegExp(
+            r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
+        .hasMatch(email);
+    if (!emailValid) {
+      throw "Email yang anda ketikkan tidak valid";
+    }
+    // check password
+    if (password != password2) {
+      throw "Password tidak sama";
+    }
+    // register
+    var data = <String, dynamic>{};
+    data["nama_lengkap"] = namaLengkap.trim();
+    data["email"] = email.trim();
+    data["password"] = password.trim();
+    data["tgl_lahir"] = tanggalLahir.trim();
+    data["jenis_kelamin"] = jenisKelamin.trim();
+    data["password"] = password.trim();
+    data["password2"] = password2.trim();
+    data["kontak"] = kontak.trim();
+    var sts = status.toLowerCase().replaceAll(RegExp(" +"), "");
+    data["status"] = sts.replaceAll("/", "_").trim();
+    var response = await http
+        .post(Uri.parse("${dotenv.env['API_HOST']}/register"), body: data);
+    var result = json.decode(response.body);
+    if (result["status"] != "ERR") {
+      return true;
+    } else {
+      throw result["data"]["message"];
+    }
+  } else {
+    throw "Harap melengkapi data";
+  }
 }

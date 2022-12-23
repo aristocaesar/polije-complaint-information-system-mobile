@@ -1,6 +1,10 @@
+import 'dart:convert';
+import 'package:elapor_polije/session/session.dart';
+import 'package:elapor_polije/session/user_state.dart';
 import 'package:flutter/material.dart';
-// import 'package:shared_preferences/shared_preferences.dart';
-// import 'package:http/http.dart' as http;
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:get/get.dart';
+import 'package:http/http.dart' as http;
 import 'package:elapor_polije/pages/auth/recovery.dart';
 import 'package:elapor_polije/pages/auth/register.dart';
 import 'package:elapor_polije/pages/landing.dart';
@@ -14,6 +18,8 @@ class Login extends StatefulWidget {
 }
 
 class _LoginState extends State<Login> {
+  // global state
+  final userState = Get.put(UserStateController());
   // form state
   final _formKey = GlobalKey<FormState>();
 
@@ -93,6 +99,9 @@ class _LoginState extends State<Login> {
                                 ),
                                 TextFormField(
                                   controller: _passwordController,
+                                  obscureText: true,
+                                  enableSuggestions: false,
+                                  autocorrect: false,
                                   decoration: InputDecoration(
                                     hintText: "Ketikkan Password",
                                     border: OutlineInputBorder(
@@ -141,7 +150,14 @@ class _LoginState extends State<Login> {
                                       try {
                                         if (await _loginSubmit(
                                             _emailController.text,
-                                            _passwordController.text)) {
+                                            _passwordController.text,
+                                            userState)) {
+                                          // ignore: use_build_context_synchronously
+                                          ScaffoldMessenger.of(context)
+                                              .showSnackBar(SnackBar(
+                                            content: Text(
+                                                "Hallo, ${userState.namaLengkap.toString()}"),
+                                          ));
                                           // ignore: use_build_context_synchronously
                                           Navigator.of(context)
                                               .pushNamed(Landing.nameRoute);
@@ -211,10 +227,35 @@ class _LoginState extends State<Login> {
   }
 }
 
-Future<bool> _loginSubmit(String email, String password) async {
-  // Obtain shared preferences.
-  // final prefs = await SharedPreferences.getInstance();
-  // print(email);
-  // print(password);
-  return true;
+Future<bool> _loginSubmit(
+    String email, String password, UserStateController userState) async {
+  if (email.isEmpty || password.isEmpty) {
+    throw "Harap melengkapi email dan password";
+  }
+  var data = <String, dynamic>{};
+  data["email"] = email.trim();
+  data["password"] = password.trim();
+  var response =
+      await http.post(Uri.parse("${dotenv.env['API_HOST']}/login"), body: data);
+  var result = json.decode(response.body);
+  if (result["status"] != "ERR") {
+    var user = result["data"];
+    // init sessions
+    userState.setState(
+        user["id"],
+        user["nama"],
+        user["email"],
+        "${dotenv.env['BASE_HOST']}/public/upload/assets/images/${user['foto']}",
+        user["verifikasi_email"]);
+    Session().setSession({
+      "id": user["id"],
+      "nama": user["nama"],
+      "email": user["email"],
+      "foto":
+          "${dotenv.env['BASE_HOST']}/public/upload/assets/images/${user['foto']}"
+    });
+    return true;
+  } else {
+    throw result["data"]["message"];
+  }
 }

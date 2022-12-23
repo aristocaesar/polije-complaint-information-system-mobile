@@ -1,9 +1,13 @@
+import 'dart:convert';
+
+import 'package:elapor_polije/session/user_state.dart';
 import 'package:flutter/material.dart';
 import 'package:elapor_polije/component/hero_main.dart';
 import 'package:elapor_polije/component/drawer.dart';
-import 'package:elapor_polije/pages/menus/aspirasi.dart';
-import 'package:elapor_polije/pages/menus/informasi.dart';
-import 'package:elapor_polije/pages/menus/pengaduan.dart';
+import 'package:elapor_polije/pages/menus/klasifikasi.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:get/get.dart';
+import 'package:http/http.dart' as http;
 
 class Landing extends StatefulWidget {
   static const nameRoute = "/landing";
@@ -14,6 +18,9 @@ class Landing extends StatefulWidget {
 }
 
 class _LandingState extends State<Landing> {
+  // global state
+  final userState = Get.put(UserStateController());
+
   final _scaffoldKey = GlobalKey<ScaffoldState>();
 
   @override
@@ -49,19 +56,19 @@ class _LandingState extends State<Landing> {
                                   Icons.chat_bubble_outline,
                                   "Pengaduan",
                                   "Laporkan sebuah informasi",
-                                  Pengaduan.nameRoute),
+                                  userState),
                               _buildItemKlasifikasi(
                                   context,
                                   Icons.send,
                                   "Aspirasi",
                                   "Kirimkan suara aspirasimu",
-                                  Aspirasi.nameRoute),
+                                  userState),
                               _buildItemKlasifikasi(
                                   context,
                                   Icons.info,
                                   "Informasi",
                                   "Dapatkan informasi kampus",
-                                  Informasi.nameRoute)
+                                  userState)
                             ],
                           )),
                     ),
@@ -72,13 +79,28 @@ class _LandingState extends State<Landing> {
   }
 }
 
-Widget _buildItemKlasifikasi(BuildContext ctx, IconData icon, String title,
-    String description, String push) {
+Widget _buildItemKlasifikasi(
+    BuildContext ctx,
+    IconData icon,
+    String titleKlasifikasi,
+    String description,
+    UserStateController userState) {
   return Column(
     children: [
       GestureDetector(
         onTap: () {
-          Navigator.of(ctx).pushNamed(push);
+          _getUserVerifikasiEmail(userState.id).then((value) {
+            Navigator.push(
+                ctx,
+                MaterialPageRoute(
+                    builder: ((context) => Klasifikasi(
+                          title: titleKlasifikasi,
+                        ))));
+          }).catchError((error) {
+            ScaffoldMessenger.of(ctx).showSnackBar(SnackBar(
+              content: Text(error),
+            ));
+          });
         },
         child: Card(
             elevation: 2,
@@ -86,12 +108,12 @@ Widget _buildItemKlasifikasi(BuildContext ctx, IconData icon, String title,
               borderRadius: BorderRadius.circular(15),
             ),
             child: Padding(
-              padding: const EdgeInsets.only(top: 15.0, bottom: 15.0),
+              padding: const EdgeInsets.only(bottom: 15.0),
               child: ListTile(
                   leading: Icon(icon,
                       size: 40, color: const Color.fromRGBO(15, 76, 117, 1)),
                   title: Text(
-                    title,
+                    titleKlasifikasi,
                     style: const TextStyle(
                         color: Color.fromRGBO(15, 76, 117, 1),
                         fontWeight: FontWeight.bold,
@@ -109,4 +131,16 @@ Widget _buildItemKlasifikasi(BuildContext ctx, IconData icon, String title,
       const SizedBox(height: 25)
     ],
   );
+}
+
+Future<bool> _getUserVerifikasiEmail(String id) async {
+  var response = await http
+      .get(Uri.parse("${dotenv.env['API_HOST']}/pengguna/${id.trim()}"));
+  var result = json.decode(response.body);
+  var user = result["data"];
+  if (user["verifikasi_email"] == "terverifikasi") {
+    return true;
+  } else {
+    throw "Harap verifikasi email sebelum menggunakan layanan";
+  }
 }

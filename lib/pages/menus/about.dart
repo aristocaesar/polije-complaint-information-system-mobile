@@ -45,7 +45,7 @@ class _AboutState extends State<About> {
                                 "Pengelolaan pengaduan pelayanan publik di Politeknik Negeri Jember belum terkelola secara efektif dan terintegrasi. Masing-masing penyelenggara mengelola pengaduan secara parsial dan tidak terkoordinir dengan baik. Akibatnya terjadi duplikasi penanganan pengaduan, atau bahkan bisa terjadi suatu pengaduan tidak ditangani oleh satupun penyelenggara, dengan alasan pengaduan bukan kewenangannya. Oleh karena itu, untuk mencapai visi dalam good governance maka perlu untuk mengintegrasikan sistem pengelolaan pengaduan pelayanan publik dalam satu pintu. Tujuannya, Politeknik Negeri Jember memiliki satu saluran pengaduan yang baik dan tertata.",
                                 style: TextStyle(
                                   fontFamily: "Poppins",
-                                  fontSize: 20,
+                                  fontSize: 18,
                                 ),
                               ),
                               SizedBox(height: 30),
@@ -53,7 +53,7 @@ class _AboutState extends State<About> {
                                 "Untuk itu Politeknik Negeri Jember membentuk Sistem Pengelolaan Pengaduan Pelayanan Kampus - Layanan Aspirasi dan Pengaduan Online adalah layanan penyampaian semua aspirasi dan pengaduan masyrakat Politeknik Negeri Jember melalui beberapa kanal pengaduan yaitu website www.lapor.polije.ac.id serta aplikasi mobile E-Lapor Polije (Android).",
                                 style: TextStyle(
                                   fontFamily: "Poppins",
-                                  fontSize: 20,
+                                  fontSize: 18,
                                 ),
                               ),
                               SizedBox(height: 30),

@@ -1,6 +1,13 @@
+import 'dart:async';
+
+import 'package:elapor_polije/session/user_state.dart';
 import 'package:flutter/material.dart';
 import 'package:elapor_polije/component/hero_main.dart';
 import 'package:elapor_polije/component/drawer.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:get/get.dart';
+import 'dart:convert';
+import 'package:http/http.dart' as http;
 
 class ChangePassword extends StatefulWidget {
   static const nameRoute = "/change_password";
@@ -11,6 +18,9 @@ class ChangePassword extends StatefulWidget {
 }
 
 class _ChangePasswordState extends State<ChangePassword> {
+  // global state
+  final userState = Get.put(UserStateController());
+
   final _scaffoldKey = GlobalKey<ScaffoldState>();
   // controller
   final _passwordController = TextEditingController();
@@ -30,7 +40,7 @@ class _ChangePasswordState extends State<ChangePassword> {
             ),
             child: Column(
               children: <Widget>[
-                HeroComponent(title: "Ganti Password", drawer: _scaffoldKey),
+                HeroComponent(title: "Password", drawer: _scaffoldKey),
                 Expanded(
                   child: Container(
                     decoration: const BoxDecoration(
@@ -46,7 +56,7 @@ class _ChangePasswordState extends State<ChangePassword> {
                           child: ListView(
                             children: [
                               const Text(
-                                "Password",
+                                "Password Baru",
                                 style: TextStyle(
                                     fontWeight: FontWeight.bold,
                                     fontFamily: 'Poppins',
@@ -58,14 +68,14 @@ class _ChangePasswordState extends State<ChangePassword> {
                               TextFormField(
                                 controller: _passwordController,
                                 decoration: InputDecoration(
-                                  hintText: "Ketik Password",
+                                  hintText: "Ketik Password Baru",
                                   border: OutlineInputBorder(
                                       borderRadius: BorderRadius.circular(5.0)),
                                 ),
                               ),
                               const SizedBox(height: 30),
                               const Text(
-                                "Konfirmasi Password",
+                                "Konfirmasi Password Baru",
                                 style: TextStyle(
                                     fontWeight: FontWeight.bold,
                                     fontFamily: 'Poppins',
@@ -77,7 +87,7 @@ class _ChangePasswordState extends State<ChangePassword> {
                               TextFormField(
                                 controller: _konfirmasiPasswordController,
                                 decoration: InputDecoration(
-                                  hintText: "Ketik Ulang Password",
+                                  hintText: "Ketik Ulang Password Baru",
                                   border: OutlineInputBorder(
                                       borderRadius: BorderRadius.circular(5.0)),
                                 ),
@@ -98,7 +108,7 @@ class _ChangePasswordState extends State<ChangePassword> {
                               TextFormField(
                                 controller: _oldPasswordController,
                                 decoration: InputDecoration(
-                                  hintText: "Ketikkan Email",
+                                  hintText: "Ketikkan Password Lama",
                                   border: OutlineInputBorder(
                                       borderRadius: BorderRadius.circular(5.0)),
                                 ),
@@ -113,7 +123,7 @@ class _ChangePasswordState extends State<ChangePassword> {
                               ),
                               const SizedBox(height: 10),
                               const Text(
-                                  "Setelah anda mengklik simpan, anda akan otomatis keluar.",
+                                  "Setelah anda mengklik simpan, anda akan otomatis logout.",
                                   style: TextStyle(
                                       fontFamily: 'Poppins', fontSize: 16)),
                               const SizedBox(height: 30),
@@ -128,28 +138,25 @@ class _ChangePasswordState extends State<ChangePassword> {
                                       borderRadius: BorderRadius.circular(8),
                                     ),
                                   ),
-                                  onPressed: () async {
-                                    try {
-                                      if (await _submitChangePassword(
-                                        _passwordController.text,
-                                        _konfirmasiPasswordController.text,
-                                        _oldPasswordController.text,
-                                      )) {
-                                        // ignore: use_build_context_synchronously
-                                        ScaffoldMessenger.of(context)
-                                            .showSnackBar(const SnackBar(
-                                          content: Text(
-                                              'Password berhasil diperbarui'),
-                                        ));
-                                        // ignore: use_build_context_synchronously
-                                        Navigator.pop(context);
-                                      }
-                                    } catch (e) {
+                                  onPressed: () {
+                                    _submitChangePassword(
+                                            _passwordController.text,
+                                            _konfirmasiPasswordController.text,
+                                            _oldPasswordController.text,
+                                            userState)
+                                        .then((value) {
+                                      ScaffoldMessenger.of(context)
+                                          .showSnackBar(const SnackBar(
+                                        content: Text(
+                                            'Password berhasil diperbarui, anda'),
+                                      ));
+                                      Navigator.pop(context);
+                                    }).catchError((error) {
                                       ScaffoldMessenger.of(context)
                                           .showSnackBar(SnackBar(
-                                        content: Text(e.toString()),
+                                        content: Text(error),
                                       ));
-                                    }
+                                    });
                                   },
                                   child: const Text(
                                     "Simpan",
@@ -174,12 +181,24 @@ class _ChangePasswordState extends State<ChangePassword> {
   }
 }
 
-Future<bool> _submitChangePassword(
-    String email, String password, String konfirmasipassword) async {
-  // Obtain shared preferences.
-  // final prefs = await SharedPreferences.getInstance();
-  // print(email);
-  // print(password);
-  // print(konfirmasiPassword)
+Future<bool> _submitChangePassword(String password, String konfirmasiPassword,
+    String passwordLama, UserStateController userState) async {
+  // check password match
+  if (password != konfirmasiPassword) {
+    throw "Password tidak sama";
+  }
+  // change password
+  var data = <String, dynamic>{};
+  data["id_user_mobile"] = userState.id;
+  data["password"] = password.trim();
+  data["password2"] = konfirmasiPassword.trim();
+  data["old_password"] = passwordLama.trim();
+  var response = await http.post(
+      Uri.parse("${dotenv.env['API_HOST']}/pengguna/changepassword"),
+      body: data);
+  var result = json.decode(response.body);
+  if (result["status"] == "ERR") {
+    throw result["data"]["message"];
+  }
   return true;
 }

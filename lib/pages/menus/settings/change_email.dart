@@ -1,6 +1,13 @@
+import 'dart:convert';
+
+import 'package:elapor_polije/pages/menus/setting.dart';
+import 'package:elapor_polije/session/user_state.dart';
 import 'package:flutter/material.dart';
 import 'package:elapor_polije/component/hero_main.dart';
 import 'package:elapor_polije/component/drawer.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:get/get.dart';
+import 'package:http/http.dart' as http;
 
 class ChangeEmail extends StatefulWidget {
   static const nameRoute = "/change_email";
@@ -11,6 +18,7 @@ class ChangeEmail extends StatefulWidget {
 }
 
 class _ChangeEmailState extends State<ChangeEmail> {
+  final userState = Get.put(UserStateController());
   final _scaffoldKey = GlobalKey<ScaffoldState>();
   // controller
   final _emailController = TextEditingController();
@@ -46,7 +54,7 @@ class _ChangeEmailState extends State<ChangeEmail> {
                           child: ListView(
                             children: [
                               const Text(
-                                "Email",
+                                "Email Baru",
                                 style: TextStyle(
                                     fontWeight: FontWeight.bold,
                                     fontFamily: 'Poppins',
@@ -58,7 +66,7 @@ class _ChangeEmailState extends State<ChangeEmail> {
                               TextFormField(
                                 controller: _emailController,
                                 decoration: InputDecoration(
-                                  hintText: "Ketikkan Email",
+                                  hintText: "Ketikkan Email Baru",
                                   border: OutlineInputBorder(
                                       borderRadius: BorderRadius.circular(5.0)),
                                 ),
@@ -67,7 +75,7 @@ class _ChangeEmailState extends State<ChangeEmail> {
                                 height: 30,
                               ),
                               const Text(
-                                "Konfirmasi Email",
+                                "Konfirmasi Email Baru",
                                 style: TextStyle(
                                     fontWeight: FontWeight.bold,
                                     fontFamily: 'Poppins',
@@ -79,7 +87,7 @@ class _ChangeEmailState extends State<ChangeEmail> {
                               TextFormField(
                                 controller: _konfirmasiEmailController,
                                 decoration: InputDecoration(
-                                  hintText: "Ketik Ulang Email",
+                                  hintText: "Ketik Ulang Email Baru",
                                   border: OutlineInputBorder(
                                       borderRadius: BorderRadius.circular(5.0)),
                                 ),
@@ -112,12 +120,12 @@ class _ChangeEmailState extends State<ChangeEmail> {
                                     fontSize: 18),
                               ),
                               const SizedBox(height: 10),
-                              const Text("• Email Harus Akif",
+                              const Text("• Email Harus Akif.",
                                   style: TextStyle(
                                       fontFamily: 'Poppins', fontSize: 16)),
                               const SizedBox(height: 10),
                               const Text(
-                                  "• Email Harus Akif Jika link verifikasi tidak tersedia, harap cek pada bagian spam.",
+                                  "• Jika tautan verifikasi tidak tersedia, harap cek pada bagian spam.",
                                   style: TextStyle(
                                       fontFamily: 'Poppins', fontSize: 16)),
                               const SizedBox(height: 30),
@@ -132,27 +140,38 @@ class _ChangeEmailState extends State<ChangeEmail> {
                                       borderRadius: BorderRadius.circular(8),
                                     ),
                                   ),
-                                  onPressed: () async {
-                                    try {
-                                      if (await _submitChangeEmail(
-                                          _emailController.text,
-                                          _konfirmasiEmailController.text,
-                                          _passwordController.text)) {
-                                        // ignore: use_build_context_synchronously
-                                        ScaffoldMessenger.of(context)
-                                            .showSnackBar(const SnackBar(
-                                          content: Text(
-                                              "Berhasil memperbarui email"),
-                                        ));
-                                        // ignore: use_build_context_synchronously
-                                        Navigator.pop(context);
-                                      }
-                                    } catch (e) {
+                                  onPressed: () {
+                                    ScaffoldMessenger.of(context)
+                                        .showSnackBar(const SnackBar(
+                                      content: Text("Mohon tunggu sebentar"),
+                                    ));
+                                    _submitChangeEmail(
+                                            _emailController.text,
+                                            _konfirmasiEmailController.text,
+                                            _passwordController.text,
+                                            userState)
+                                        .then((value) {
+                                      // update state
+                                      userState.verifikasiEmail =
+                                          "belum_terverifikasi";
+                                      ScaffoldMessenger.of(context)
+                                          .showSnackBar(const SnackBar(
+                                        content:
+                                            Text("Berhasil memperbarui email"),
+                                      ));
+                                      Navigator.pop(context);
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) =>
+                                                const Setting()),
+                                      );
+                                    }).catchError((error) {
                                       ScaffoldMessenger.of(context)
                                           .showSnackBar(SnackBar(
-                                        content: Text(e.toString()),
+                                        content: Text(error.toString()),
                                       ));
-                                    }
+                                    });
                                   },
                                   child: const Text(
                                     "Simpan",
@@ -177,12 +196,31 @@ class _ChangeEmailState extends State<ChangeEmail> {
   }
 }
 
-Future<bool> _submitChangeEmail(
-    String email, String password, String konfirmasipassword) async {
-  // Obtain shared preferences.
-  // final prefs = await SharedPreferences.getInstance();
-  // print(email);
-  // print(konfirmasiEmail);
-  // print(password);
+Future<bool> _submitChangeEmail(String email, String konfirmasiEmail,
+    String password, UserStateController userState) async {
+  // check empty filed
+  if (email.isEmpty || konfirmasiEmail.isEmpty || password.isEmpty) {
+    throw "Harap mengisi email, konfirmasi email dan password";
+  }
+  // check password match
+  if (email != konfirmasiEmail) {
+    throw "Email yang anda masukkan tidak sama";
+  }
+  if (!email.isEmail || !konfirmasiEmail.isEmail) {
+    throw "Email yang anda masukkan tidak valid";
+  }
+  // change password
+  var data = <String, dynamic>{};
+  data["id_user_mobile"] = userState.id;
+  data["email"] = email.trim();
+  data["email2"] = konfirmasiEmail.trim();
+  data["password"] = password.trim();
+  var response = await http.post(
+      Uri.parse("${dotenv.env['API_HOST']}/pengguna/changeemail"),
+      body: data);
+  var result = json.decode(response.body);
+  if (result["status"] == "ERR") {
+    throw result["data"]["message"];
+  }
   return true;
 }

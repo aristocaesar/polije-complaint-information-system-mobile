@@ -19,6 +19,7 @@ class _SplashScreenState extends State<SplashScreen> {
 
   splashScreenStart() async {
     return Timer(const Duration(seconds: 5), () {
+      Navigator.pop(context);
       Navigator.of(context).pushNamed(Login.nameRoute);
     });
   }
