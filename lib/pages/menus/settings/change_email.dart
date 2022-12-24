@@ -141,10 +141,6 @@ class _ChangeEmailState extends State<ChangeEmail> {
                                     ),
                                   ),
                                   onPressed: () {
-                                    ScaffoldMessenger.of(context)
-                                        .showSnackBar(const SnackBar(
-                                      content: Text("Mohon tunggu sebentar"),
-                                    ));
                                     _submitChangeEmail(
                                             _emailController.text,
                                             _konfirmasiEmailController.text,

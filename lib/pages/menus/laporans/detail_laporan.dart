@@ -1,5 +1,4 @@
 import 'dart:convert';
-
 import 'package:elapor_polije/component/string_extentions.dart';
 import 'package:flutter/material.dart';
 import 'package:elapor_polije/component/hero_main.dart';
@@ -184,10 +183,21 @@ class _DetailLaporanState extends State<DetailLaporan> {
 
                                 onPressed: () {
                                   if (lampiranPengguna != "") {
-                                    showDialog(
-                                        context: context,
-                                        builder: (_) =>
-                                            ImageDialog(lampiranPengguna));
+                                    Lampiran.checkMimeType(lampiranPengguna)
+                                        .then((mimeType) {
+                                      if (mimeType == "image") {
+                                        showDialog(
+                                            context: context,
+                                            builder: (_) =>
+                                                ImageDialog(lampiranPengguna));
+                                      } else {
+                                        ScaffoldMessenger.of(context)
+                                            .showSnackBar(const SnackBar(
+                                          content: Text(
+                                              "Lampiran hanya data tersedia pada website"),
+                                        ));
+                                      }
+                                    });
                                   } else {
                                     ScaffoldMessenger.of(context)
                                         .showSnackBar(const SnackBar(
@@ -290,10 +300,21 @@ class _DetailLaporanState extends State<DetailLaporan> {
                                         EdgeInsets.zero)),
                                 onPressed: () {
                                   if (lampiranPetugas != "") {
-                                    showDialog(
-                                        context: context,
-                                        builder: (_) =>
-                                            ImageDialog(lampiranPetugas));
+                                    Lampiran.checkMimeType(lampiranPetugas)
+                                        .then((mimeType) {
+                                      if (mimeType == "image") {
+                                        showDialog(
+                                            context: context,
+                                            builder: (_) =>
+                                                ImageDialog(lampiranPetugas));
+                                      } else {
+                                        ScaffoldMessenger.of(context)
+                                            .showSnackBar(const SnackBar(
+                                          content: Text(
+                                              "Lampiran hanya data tersedia pada website"),
+                                        ));
+                                      }
+                                    });
                                   } else {
                                     ScaffoldMessenger.of(context)
                                         .showSnackBar(const SnackBar(
@@ -350,8 +371,16 @@ class _DetailLaporanState extends State<DetailLaporan> {
   }
 }
 
+class Lampiran {
+  static Future<String?> checkMimeType(String url) async {
+    var response = await http.get(Uri.parse(url));
+    return response.headers["content-type"]?.split("/")[0];
+  }
+}
+
 class ImageDialog extends StatelessWidget {
   final String link;
+
   const ImageDialog(this.link, {Key? key}) : super(key: key);
 
   @override

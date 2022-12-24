@@ -553,31 +553,29 @@ class _SettingState extends State<Setting> {
                                           ),
                                         ),
                                         onPressed: () {
-                                          try {
-                                            _simpanPerubahan(
-                                                    userState,
-                                                    namaLengkapControl.text,
-                                                    dateinput.text,
-                                                    jenisKelaminSelected
-                                                        .toString(),
-                                                    alamatControl.text,
-                                                    kontakControl.text,
-                                                    statusSelected.toString())
-                                                .then((value) {
-                                              Navigator.pushReplacementNamed(
-                                                  context, Setting.nameRoute);
-                                              ScaffoldMessenger.of(context)
-                                                  .showSnackBar(const SnackBar(
-                                                content: Text(
-                                                    "Berhasil memperbarui profil"),
-                                              ));
-                                            });
-                                          } catch (e) {
+                                          _simpanPerubahan(
+                                                  userState,
+                                                  namaLengkapControl.text,
+                                                  dateinput.text,
+                                                  jenisKelaminSelected
+                                                      .toString(),
+                                                  alamatControl.text,
+                                                  kontakControl.text,
+                                                  statusSelected.toString())
+                                              .then((value) {
+                                            Navigator.pushReplacementNamed(
+                                                context, Setting.nameRoute);
+                                            ScaffoldMessenger.of(context)
+                                                .showSnackBar(const SnackBar(
+                                              content: Text(
+                                                  "Berhasil memperbarui profil"),
+                                            ));
+                                          }).catchError((error) {
                                             ScaffoldMessenger.of(context)
                                                 .showSnackBar(SnackBar(
-                                              content: Text(e.toString()),
+                                              content: Text(error),
                                             ));
-                                          }
+                                          });
                                         },
                                         child: const Text(
                                           "Simpan Perubahan",

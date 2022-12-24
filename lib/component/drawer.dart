@@ -104,6 +104,7 @@ class _DrawerComponentState extends State<DrawerComponent> {
               onTap: () {
                 Navigator.of(context).pushReplacementNamed(Login.nameRoute);
                 Session().destroySession();
+                Navigator.of(context).popUntil(((route) => route.isCurrent));
               },
             ),
           ],
