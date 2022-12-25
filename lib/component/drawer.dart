@@ -62,7 +62,6 @@ class _DrawerComponentState extends State<DrawerComponent> {
               ),
               leading: const Icon(Icons.layers),
               onTap: () async {
-                Navigator.pop(context);
                 Navigator.of(context).pushReplacementNamed(Landing.nameRoute);
               },
             ),
@@ -73,7 +72,6 @@ class _DrawerComponentState extends State<DrawerComponent> {
               ),
               leading: const Icon(Icons.archive),
               onTap: () {
-                Navigator.pop(context);
                 Navigator.of(context).pushReplacementNamed(Laporan.nameRoute);
               },
             ),
@@ -82,11 +80,7 @@ class _DrawerComponentState extends State<DrawerComponent> {
                   style: TextStyle(fontFamily: "Poppins")),
               leading: const Icon(Icons.settings),
               onTap: () {
-                Navigator.pop(context);
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => const Setting()),
-                );
+                Navigator.pushReplacementNamed(context, Setting.nameRoute);
               },
             ),
             ListTile(
@@ -102,6 +96,7 @@ class _DrawerComponentState extends State<DrawerComponent> {
                   const Text('Keluar', style: TextStyle(fontFamily: "Poppins")),
               leading: const Icon(Icons.exit_to_app),
               onTap: () {
+                Navigator.of(context).pop();
                 Navigator.of(context).pushReplacementNamed(Login.nameRoute);
                 Session().destroySession();
                 Navigator.of(context).popUntil(((route) => route.isCurrent));

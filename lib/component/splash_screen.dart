@@ -20,7 +20,7 @@ class _SplashScreenState extends State<SplashScreen> {
   }
 
   splashScreenStart() async {
-    return Timer(const Duration(seconds: 5), () {
+    return Timer(const Duration(seconds: 4), () {
       // jika ada session maka jangan login lagi
       Session().get("id").then((value) {
         if (value != "null") {

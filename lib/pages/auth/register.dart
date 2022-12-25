@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'dart:async';
 import 'package:dropdown_button2/dropdown_button2.dart';
@@ -462,16 +463,27 @@ Future<bool> _registerSubmit(
       password2.isNotEmpty &&
       kontak.isNotEmpty &&
       status != "null") {
-    // check valid email
-    final bool emailValid = RegExp(
-            r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
-        .hasMatch(email);
-    if (!emailValid) {
-      throw "Email yang anda ketikkan tidak valid";
+    // nama lengkap
+    if (namaLengkap.length < 4) {
+      throw "Nama yang anda masukkan terlalu pendek";
+    }
+    // check email
+    if (email.length < 6) {
+      throw "Email yang anda masukkan terlalu pendek";
+    }
+    if (email.isEmail) {
+      throw "Email yang anda masukkan tidak valid";
     }
     // check password
     if (password != password2) {
       throw "Password tidak sama";
+    }
+    if (password.length < 5 || password2.length < 5) {
+      throw "Password yang anda masukkan terlalu pendek";
+    }
+    // kontak
+    if (kontak.length < 4 || !kontak.isNumericOnly) {
+      throw "Kontak yang anda masukkan tidak valid";
     }
     // register
     var data = <String, dynamic>{};

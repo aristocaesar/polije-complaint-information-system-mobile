@@ -140,6 +140,6 @@ Future<bool> _getUserVerifikasiEmail(String id) async {
   if (user["verifikasi_email"] == "terverifikasi") {
     return true;
   } else {
-    throw "Harap verifikasi email sebelum menggunakan layanan";
+    throw "Harap memverifikasi email sebelum menggunakan layanan";
   }
 }

@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:elapor_polije/pages/menus/setting.dart';
+import 'package:elapor_polije/session/session.dart';
 import 'package:elapor_polije/session/user_state.dart';
 import 'package:flutter/material.dart';
 import 'package:elapor_polije/component/hero_main.dart';
@@ -24,6 +25,8 @@ class _ChangeEmailState extends State<ChangeEmail> {
   final _emailController = TextEditingController();
   final _konfirmasiEmailController = TextEditingController();
   final _passwordController = TextEditingController();
+
+  bool _passwordVisible = false;
 
   @override
   Widget build(BuildContext context) {
@@ -64,8 +67,10 @@ class _ChangeEmailState extends State<ChangeEmail> {
                                 height: 10,
                               ),
                               TextFormField(
+                                maxLength: 64,
                                 controller: _emailController,
                                 decoration: InputDecoration(
+                                  counterText: "",
                                   hintText: "Ketikkan Email Baru",
                                   border: OutlineInputBorder(
                                       borderRadius: BorderRadius.circular(5.0)),
@@ -85,8 +90,10 @@ class _ChangeEmailState extends State<ChangeEmail> {
                                 height: 10,
                               ),
                               TextFormField(
+                                maxLength: 64,
                                 controller: _konfirmasiEmailController,
                                 decoration: InputDecoration(
+                                  counterText: "",
                                   hintText: "Ketik Ulang Email Baru",
                                   border: OutlineInputBorder(
                                       borderRadius: BorderRadius.circular(5.0)),
@@ -104,11 +111,28 @@ class _ChangeEmailState extends State<ChangeEmail> {
                                 height: 10,
                               ),
                               TextFormField(
+                                obscureText: !_passwordVisible,
+                                maxLength: 64,
                                 controller: _passwordController,
                                 decoration: InputDecoration(
+                                  counterText: "",
                                   hintText: "Ketikkan Password",
                                   border: OutlineInputBorder(
                                       borderRadius: BorderRadius.circular(5.0)),
+                                  suffixIcon: IconButton(
+                                    icon: Icon(
+                                      _passwordVisible
+                                          ? Icons.visibility
+                                          : Icons.visibility_off,
+                                      color:
+                                          const Color.fromRGBO(15, 76, 117, 1),
+                                    ),
+                                    onPressed: () {
+                                      setState(() {
+                                        _passwordVisible = !_passwordVisible;
+                                      });
+                                    },
+                                  ),
                                 ),
                               ),
                               const SizedBox(height: 30),
@@ -125,7 +149,7 @@ class _ChangeEmailState extends State<ChangeEmail> {
                                       fontFamily: 'Poppins', fontSize: 16)),
                               const SizedBox(height: 10),
                               const Text(
-                                  "• Jika tautan verifikasi tidak tersedia, harap cek pada bagian spam.",
+                                  "• Jika pesan verifikasi tidak tersedia, harap cek pada bagian spam.",
                                   style: TextStyle(
                                       fontFamily: 'Poppins', fontSize: 16)),
                               const SizedBox(height: 30),
@@ -141,6 +165,11 @@ class _ChangeEmailState extends State<ChangeEmail> {
                                     ),
                                   ),
                                   onPressed: () {
+                                    ScaffoldMessenger.of(context)
+                                        .showSnackBar(const SnackBar(
+                                      content: Text("Mohon tunggu sebentar"),
+                                      duration: Duration(seconds: 1),
+                                    ));
                                     _submitChangeEmail(
                                             _emailController.text,
                                             _konfirmasiEmailController.text,
@@ -152,16 +181,12 @@ class _ChangeEmailState extends State<ChangeEmail> {
                                           "belum_terverifikasi";
                                       ScaffoldMessenger.of(context)
                                           .showSnackBar(const SnackBar(
-                                        content:
-                                            Text("Berhasil memperbarui email"),
+                                        content: Text(
+                                            "Berhasil memperbarui email, silakan verifikasi"),
                                       ));
-                                      Navigator.pop(context);
-                                      Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                            builder: (context) =>
-                                                const Setting()),
-                                      );
+                                      Navigator.of(context)
+                                          .pushReplacementNamed(
+                                              Setting.nameRoute);
                                     }).catchError((error) {
                                       ScaffoldMessenger.of(context)
                                           .showSnackBar(SnackBar(
@@ -196,14 +221,22 @@ Future<bool> _submitChangeEmail(String email, String konfirmasiEmail,
     String password, UserStateController userState) async {
   // check empty filed
   if (email.isEmpty || konfirmasiEmail.isEmpty || password.isEmpty) {
-    throw "Harap mengisi email, konfirmasi email dan password";
+    throw "Harap melengkapi email dan password";
+  }
+  if (email.length < 6 || konfirmasiEmail.length < 6) {
+    throw "Email yang anda masukkan terlalu pendek";
   }
   // check password match
   if (email != konfirmasiEmail) {
     throw "Email yang anda masukkan tidak sama";
   }
+  // cek valid email
   if (!email.isEmail || !konfirmasiEmail.isEmail) {
     throw "Email yang anda masukkan tidak valid";
+  }
+  // cek length password
+  if (password.length < 5) {
+    throw "Password yang anda masukkan terlalu pendek";
   }
   // change password
   var data = <String, dynamic>{};
@@ -218,5 +251,8 @@ Future<bool> _submitChangeEmail(String email, String konfirmasiEmail,
   if (result["status"] == "ERR") {
     throw result["data"]["message"];
   }
+  // change state dan session email
+  userState.email = email;
+  Session().setSession({"email": email});
   return true;
 }

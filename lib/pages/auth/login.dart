@@ -22,6 +22,7 @@ class _LoginState extends State<Login> {
   final userState = Get.put(UserStateController());
   // form state
   final _formKey = GlobalKey<FormState>();
+  bool _passwordVisible = false;
 
   // controller
   final _emailController = TextEditingController();
@@ -83,8 +84,10 @@ class _LoginState extends State<Login> {
                                   height: 10,
                                 ),
                                 TextFormField(
+                                  maxLength: 64,
                                   controller: _emailController,
                                   decoration: InputDecoration(
+                                    counterText: "",
                                     hintText: "Ketikkan Email",
                                     border: OutlineInputBorder(
                                         borderRadius:
@@ -105,15 +108,31 @@ class _LoginState extends State<Login> {
                                   height: 10,
                                 ),
                                 TextFormField(
+                                  maxLength: 64,
                                   controller: _passwordController,
-                                  obscureText: true,
+                                  obscureText: !_passwordVisible,
                                   enableSuggestions: false,
                                   autocorrect: false,
                                   decoration: InputDecoration(
+                                    counterText: "",
                                     hintText: "Ketikkan Password",
                                     border: OutlineInputBorder(
                                         borderRadius:
                                             BorderRadius.circular(5.0)),
+                                    suffixIcon: IconButton(
+                                      icon: Icon(
+                                        _passwordVisible
+                                            ? Icons.visibility
+                                            : Icons.visibility_off,
+                                        color: const Color.fromRGBO(
+                                            15, 76, 117, 1),
+                                      ),
+                                      onPressed: () {
+                                        setState(() {
+                                          _passwordVisible = !_passwordVisible;
+                                        });
+                                      },
+                                    ),
                                   ),
                                 ),
                                 const SizedBox(
@@ -234,8 +253,16 @@ class _LoginState extends State<Login> {
 
 Future<bool> _loginSubmit(
     String email, String password, UserStateController userState) async {
+  // cek fieled empty
   if (email.isEmpty || password.isEmpty) {
     throw "Harap melengkapi email dan password";
+  }
+  if (!email.isEmail) {
+    throw "Email yang anda masukkan tidak valid";
+  }
+  // cek length field
+  if (email.length < 6 || password.length < 5) {
+    throw "Email atau password yang anda masukkan terlalu pendek";
   }
   var data = <String, dynamic>{};
   data["email"] = email.trim();

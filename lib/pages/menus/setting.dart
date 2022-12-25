@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'dart:async';
 import 'dart:convert';
 
@@ -407,8 +409,8 @@ class _SettingState extends State<Setting> {
                                                 fontSize: 18),
                                           ),
                                         ),
-                                        _kirimUlangVerifikasi(
-                                            context, getUserVerifikasi),
+                                        _kirimUlangVerifikasi(context,
+                                            userState.email, getUserVerifikasi),
                                       ],
                                     ),
                                     const SizedBox(
@@ -634,25 +636,32 @@ Future updateFoto(UserStateController userState) async {
   }
 }
 
-Widget _kirimUlangVerifikasi(BuildContext ctx, String userVerifikasi) {
+Widget _kirimUlangVerifikasi(
+    BuildContext ctx, String email, String userVerifikasi) {
   if (userVerifikasi == "belum_terverifikasi") {
     return TextButton(
       onPressed: () async {
-        // send ulang token
-        // var data = <String, dynamic>{};
-        // // data["email"]
-        // var response = await http.post(
-        //     Uri.parse("${dotenv.env['API_HOST']}/pengguna/update"),
-        //     body: data);
-        // var result = json.decode(response.body);
-        // ignore: use_build_context_synchronously
         ScaffoldMessenger.of(ctx).showSnackBar(const SnackBar(
           content: Text("Mohon tunggu sebentar"),
+          duration: Duration(seconds: 1),
         ));
-        // ignore: use_build_context_synchronously
-        ScaffoldMessenger.of(ctx).showSnackBar(const SnackBar(
-          content: Text("Tautan verifikasi berhasil dikirim ulang"),
-        ));
+        // send ulang token
+        var data = <String, dynamic>{};
+        data["email"] = email;
+        var response = await http.post(
+            Uri.parse("${dotenv.env['API_HOST']}/pengguna/sendnewverifikasi"),
+            body: data);
+        var result = json.decode(response.body);
+        if (result["data"]["pesan_verifikasi"] == "Dikirim ulang") {
+          ScaffoldMessenger.of(ctx).showSnackBar(const SnackBar(
+            content: Text("Tautan verifikasi berhasil dikirim ulang"),
+          ));
+        } else {
+          ScaffoldMessenger.of(ctx).showSnackBar(const SnackBar(
+            content: Text(
+                "Tautan verifikasi sudah dikirim ulang, harap cek email kembali"),
+          ));
+        }
       },
       style: ButtonStyle(
         alignment: Alignment.centerLeft,
