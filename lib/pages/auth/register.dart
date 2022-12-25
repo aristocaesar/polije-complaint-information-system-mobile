@@ -294,6 +294,7 @@ class _RegisterState extends State<Register> {
                                   height: 10,
                                 ),
                                 TextFormField(
+                                  maxLength: 15,
                                   keyboardType: TextInputType.phone,
                                   controller: _kontakController,
                                   decoration: InputDecoration(

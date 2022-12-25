@@ -150,8 +150,11 @@ class _SettingState extends State<Setting> {
                                       height: 10,
                                     ),
                                     TextFormField(
+                                      keyboardType: TextInputType.name,
+                                      maxLength: 64,
                                       controller: namaLengkapControl,
                                       decoration: InputDecoration(
+                                        counterText: "",
                                         hintText: "Ketikkan Nama Lengkap",
                                         border: OutlineInputBorder(
                                             borderRadius:
@@ -271,9 +274,12 @@ class _SettingState extends State<Setting> {
                                       height: 10,
                                     ),
                                     TextFormField(
+                                      maxLength: 128,
+                                      keyboardType: TextInputType.streetAddress,
                                       controller: alamatControl,
                                       maxLines: 5,
                                       decoration: InputDecoration(
+                                        counterText: "",
                                         hintText: "Ketikkan Alamat",
                                         border: OutlineInputBorder(
                                             borderRadius:
@@ -295,8 +301,11 @@ class _SettingState extends State<Setting> {
                                       height: 10,
                                     ),
                                     TextFormField(
+                                      maxLength: 15,
+                                      keyboardType: TextInputType.phone,
                                       controller: kontakControl,
                                       decoration: InputDecoration(
+                                        counterText: "",
                                         hintText: "Ketikkan Kontak",
                                         border: OutlineInputBorder(
                                             borderRadius:
