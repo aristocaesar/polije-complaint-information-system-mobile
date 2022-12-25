@@ -85,6 +85,7 @@ class _LoginState extends State<Login> {
                                 ),
                                 TextFormField(
                                   maxLength: 64,
+                                  keyboardType: TextInputType.emailAddress,
                                   controller: _emailController,
                                   decoration: InputDecoration(
                                     counterText: "",
@@ -109,6 +110,7 @@ class _LoginState extends State<Login> {
                                 ),
                                 TextFormField(
                                   maxLength: 64,
+                                  keyboardType: TextInputType.name,
                                   controller: _passwordController,
                                   obscureText: !_passwordVisible,
                                   enableSuggestions: false,

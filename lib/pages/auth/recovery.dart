@@ -72,8 +72,11 @@ class _RecoveryState extends State<Recovery> {
                                   height: 10,
                                 ),
                                 TextFormField(
+                                  keyboardType: TextInputType.emailAddress,
+                                  maxLength: 64,
                                   controller: _emailController,
                                   decoration: InputDecoration(
+                                    counterText: "",
                                     hintText: "Ketikkan Email",
                                     border: OutlineInputBorder(
                                         borderRadius:

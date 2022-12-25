@@ -99,8 +99,11 @@ class _RegisterState extends State<Register> {
                                   height: 10,
                                 ),
                                 TextFormField(
+                                  keyboardType: TextInputType.name,
+                                  maxLength: 64,
                                   controller: _namaController,
                                   decoration: InputDecoration(
+                                    counterText: "",
                                     hintText: "Ketikkan Nama Lengkap",
                                     border: OutlineInputBorder(
                                         borderRadius:
@@ -216,8 +219,11 @@ class _RegisterState extends State<Register> {
                                   height: 10,
                                 ),
                                 TextFormField(
+                                  maxLength: 64,
+                                  keyboardType: TextInputType.emailAddress,
                                   controller: _emailController,
                                   decoration: InputDecoration(
+                                    counterText: "",
                                     hintText: "Ketikkan Email",
                                     border: OutlineInputBorder(
                                         borderRadius:
@@ -238,8 +244,11 @@ class _RegisterState extends State<Register> {
                                   height: 10,
                                 ),
                                 TextFormField(
+                                  keyboardType: TextInputType.name,
+                                  maxLength: 64,
                                   controller: _passwordController,
                                   decoration: InputDecoration(
+                                    counterText: "",
                                     hintText: "Ketikkan Password",
                                     border: OutlineInputBorder(
                                         borderRadius:
@@ -260,8 +269,11 @@ class _RegisterState extends State<Register> {
                                   height: 10,
                                 ),
                                 TextFormField(
+                                  keyboardType: TextInputType.name,
+                                  maxLength: 64,
                                   controller: _password2Controller,
                                   decoration: InputDecoration(
+                                    counterText: "",
                                     hintText: "Ketikkan Password",
                                     border: OutlineInputBorder(
                                         borderRadius:
@@ -282,6 +294,7 @@ class _RegisterState extends State<Register> {
                                   height: 10,
                                 ),
                                 TextFormField(
+                                  keyboardType: TextInputType.phone,
                                   controller: _kontakController,
                                   decoration: InputDecoration(
                                     hintText: "Ketikkan No Telp",
