@@ -428,7 +428,7 @@ Future<bool> _sendLaporan(String klasifikasi, String id, String kategori,
     throw "Harap melengkapi informasi";
   }
   // cek panjang deskripsi
-  if (deskripsi.length < 8) {
+  if (deskripsi.length < 18) {
     throw "Deskripsi ${klasifikasi.toLowerCase()} terlalu pendek";
   } else if (deskripsi.length > 1024) {
     throw "Deskripsi ${klasifikasi.toLowerCase()} terlalu pajang";

@@ -29,13 +29,6 @@ class _LoginState extends State<Login> {
   final _passwordController = TextEditingController();
   @override
   Widget build(BuildContext context) {
-    Session().get("id").then((value) {
-      if (value != "null") {
-        Session().restoreSession();
-        Navigator.of(context).pop();
-        Navigator.of(context).pushReplacementNamed(Landing.nameRoute);
-      }
-    });
     return Scaffold(
         body: Container(
             decoration: const BoxDecoration(
@@ -180,14 +173,16 @@ class _LoginState extends State<Login> {
                                               _passwordController.text,
                                               userState)
                                           .then((value) {
-                                        Navigator.of(context)
-                                            .pushReplacementNamed(
-                                                Landing.nameRoute);
                                         ScaffoldMessenger.of(context)
                                             .showSnackBar(SnackBar(
                                           content: Text(
                                               "Hallo, ${userState.namaLengkap.toString()}"),
                                         ));
+                                        Navigator.of(context)
+                                            .pushReplacementNamed(
+                                                Landing.nameRoute);
+                                        Navigator.of(context).popUntil(
+                                            ((route) => route.isCurrent));
                                       }).catchError((value) {
                                         ScaffoldMessenger.of(context)
                                             .showSnackBar(SnackBar(

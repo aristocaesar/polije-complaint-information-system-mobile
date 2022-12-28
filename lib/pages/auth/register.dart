@@ -298,6 +298,7 @@ class _RegisterState extends State<Register> {
                                   keyboardType: TextInputType.phone,
                                   controller: _kontakController,
                                   decoration: InputDecoration(
+                                    counterText: "",
                                     hintText: "Ketikkan No Telp",
                                     border: OutlineInputBorder(
                                         borderRadius:
@@ -373,34 +374,37 @@ class _RegisterState extends State<Register> {
                                         borderRadius: BorderRadius.circular(8),
                                       ),
                                     ),
-                                    onPressed: () async {
-                                      try {
-                                        if (await _registerSubmit(
-                                            _namaController.text,
-                                            dateinput.text,
-                                            genderSelected.toString(),
-                                            _emailController.text,
-                                            _passwordController.text,
-                                            _password2Controller.text,
-                                            _kontakController.text,
-                                            statusSelected.toString())) {
-                                          // ignore: use_build_context_synchronously
-                                          ScaffoldMessenger.of(context)
-                                              .showSnackBar(const SnackBar(
-                                            content: Text(
-                                                'Berhasil Registrasi, Silakan Verifikasi dan Login'),
-                                          ));
-                                          Timer(
-                                              const Duration(seconds: 2),
-                                              () => Navigator.of(context)
-                                                  .pushNamed(Login.nameRoute));
-                                        }
-                                      } catch (e) {
+                                    onPressed: () {
+                                      ScaffoldMessenger.of(context)
+                                          .showSnackBar(const SnackBar(
+                                        content: Text("Mohon tunggu sebentar"),
+                                        duration: Duration(seconds: 1),
+                                      ));
+                                      _registerSubmit(
+                                              _namaController.text,
+                                              dateinput.text,
+                                              genderSelected.toString(),
+                                              _emailController.text,
+                                              _passwordController.text,
+                                              _password2Controller.text,
+                                              _kontakController.text,
+                                              statusSelected.toString())
+                                          .then((value) {
+                                        ScaffoldMessenger.of(context)
+                                            .showSnackBar(const SnackBar(
+                                          content: Text(
+                                              'Berhasil Registrasi, Silakan Verifikasi dan Login'),
+                                        ));
+                                        Timer(
+                                            const Duration(seconds: 2),
+                                            () => Navigator.of(context)
+                                                .pushNamed(Login.nameRoute));
+                                      }).catchError((value) {
                                         ScaffoldMessenger.of(context)
                                             .showSnackBar(SnackBar(
-                                          content: Text(e.toString()),
+                                          content: Text(value.toString()),
                                         ));
-                                      }
+                                      });
                                     },
                                     child: const Text(
                                       "Daftar",
@@ -485,7 +489,7 @@ Future<bool> _registerSubmit(
     if (email.length < 6) {
       throw "Email yang anda masukkan terlalu pendek";
     }
-    if (email.isEmail) {
+    if (!email.isEmail) {
       throw "Email yang anda masukkan tidak valid";
     }
     // check password
