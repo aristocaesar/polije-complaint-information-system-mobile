@@ -181,8 +181,6 @@ class _LoginState extends State<Login> {
                                         Navigator.of(context)
                                             .pushReplacementNamed(
                                                 Landing.nameRoute);
-                                        Navigator.of(context).popUntil(
-                                            ((route) => route.isCurrent));
                                       }).catchError((value) {
                                         ScaffoldMessenger.of(context)
                                             .showSnackBar(SnackBar(

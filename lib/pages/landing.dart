@@ -24,6 +24,8 @@ class _LandingState extends State<Landing> {
 
   @override
   Widget build(BuildContext context) {
+    // remove all pages
+    Navigator.of(context).popUntil(((route) => route.isCurrent));
     return Scaffold(
         key: _scaffoldKey,
         drawer: const DrawerComponent(),
