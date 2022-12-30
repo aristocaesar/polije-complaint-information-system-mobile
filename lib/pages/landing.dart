@@ -1,5 +1,4 @@
 import 'dart:convert';
-
 import 'package:elapor_polije/session/user_state.dart';
 import 'package:flutter/material.dart';
 import 'package:elapor_polije/component/hero_main.dart';
@@ -25,6 +24,8 @@ class _LandingState extends State<Landing> {
 
   @override
   Widget build(BuildContext context) {
+    // remove all pages
+    Navigator.of(context).popUntil(((route) => route.isCurrent));
     return Scaffold(
         key: _scaffoldKey,
         drawer: const DrawerComponent(),
@@ -141,6 +142,6 @@ Future<bool> _getUserVerifikasiEmail(String id) async {
   if (user["verifikasi_email"] == "terverifikasi") {
     return true;
   } else {
-    throw "Harap verifikasi email sebelum menggunakan layanan";
+    throw "Harap memverifikasi email sebelum menggunakan layanan";
   }
 }

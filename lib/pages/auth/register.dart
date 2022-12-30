@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'dart:async';
 import 'package:dropdown_button2/dropdown_button2.dart';
@@ -98,8 +99,11 @@ class _RegisterState extends State<Register> {
                                   height: 10,
                                 ),
                                 TextFormField(
+                                  keyboardType: TextInputType.name,
+                                  maxLength: 64,
                                   controller: _namaController,
                                   decoration: InputDecoration(
+                                    counterText: "",
                                     hintText: "Ketikkan Nama Lengkap",
                                     border: OutlineInputBorder(
                                         borderRadius:
@@ -215,8 +219,11 @@ class _RegisterState extends State<Register> {
                                   height: 10,
                                 ),
                                 TextFormField(
+                                  maxLength: 64,
+                                  keyboardType: TextInputType.emailAddress,
                                   controller: _emailController,
                                   decoration: InputDecoration(
+                                    counterText: "",
                                     hintText: "Ketikkan Email",
                                     border: OutlineInputBorder(
                                         borderRadius:
@@ -237,8 +244,11 @@ class _RegisterState extends State<Register> {
                                   height: 10,
                                 ),
                                 TextFormField(
+                                  keyboardType: TextInputType.name,
+                                  maxLength: 64,
                                   controller: _passwordController,
                                   decoration: InputDecoration(
+                                    counterText: "",
                                     hintText: "Ketikkan Password",
                                     border: OutlineInputBorder(
                                         borderRadius:
@@ -259,8 +269,11 @@ class _RegisterState extends State<Register> {
                                   height: 10,
                                 ),
                                 TextFormField(
+                                  keyboardType: TextInputType.name,
+                                  maxLength: 64,
                                   controller: _password2Controller,
                                   decoration: InputDecoration(
+                                    counterText: "",
                                     hintText: "Ketikkan Password",
                                     border: OutlineInputBorder(
                                         borderRadius:
@@ -281,8 +294,11 @@ class _RegisterState extends State<Register> {
                                   height: 10,
                                 ),
                                 TextFormField(
+                                  maxLength: 15,
+                                  keyboardType: TextInputType.phone,
                                   controller: _kontakController,
                                   decoration: InputDecoration(
+                                    counterText: "",
                                     hintText: "Ketikkan No Telp",
                                     border: OutlineInputBorder(
                                         borderRadius:
@@ -358,34 +374,37 @@ class _RegisterState extends State<Register> {
                                         borderRadius: BorderRadius.circular(8),
                                       ),
                                     ),
-                                    onPressed: () async {
-                                      try {
-                                        if (await _registerSubmit(
-                                            _namaController.text,
-                                            dateinput.text,
-                                            genderSelected.toString(),
-                                            _emailController.text,
-                                            _passwordController.text,
-                                            _password2Controller.text,
-                                            _kontakController.text,
-                                            statusSelected.toString())) {
-                                          // ignore: use_build_context_synchronously
-                                          ScaffoldMessenger.of(context)
-                                              .showSnackBar(const SnackBar(
-                                            content: Text(
-                                                'Berhasil Registrasi, Silakan Verifikasi dan Login'),
-                                          ));
-                                          Timer(
-                                              const Duration(seconds: 2),
-                                              () => Navigator.of(context)
-                                                  .pushNamed(Login.nameRoute));
-                                        }
-                                      } catch (e) {
+                                    onPressed: () {
+                                      ScaffoldMessenger.of(context)
+                                          .showSnackBar(const SnackBar(
+                                        content: Text("Mohon tunggu sebentar"),
+                                        duration: Duration(seconds: 1),
+                                      ));
+                                      _registerSubmit(
+                                              _namaController.text,
+                                              dateinput.text,
+                                              genderSelected.toString(),
+                                              _emailController.text,
+                                              _passwordController.text,
+                                              _password2Controller.text,
+                                              _kontakController.text,
+                                              statusSelected.toString())
+                                          .then((value) {
+                                        ScaffoldMessenger.of(context)
+                                            .showSnackBar(const SnackBar(
+                                          content: Text(
+                                              'Berhasil Registrasi, Silakan Verifikasi dan Login'),
+                                        ));
+                                        Timer(
+                                            const Duration(seconds: 2),
+                                            () => Navigator.of(context)
+                                                .pushNamed(Login.nameRoute));
+                                      }).catchError((value) {
                                         ScaffoldMessenger.of(context)
                                             .showSnackBar(SnackBar(
-                                          content: Text(e.toString()),
+                                          content: Text(value.toString()),
                                         ));
-                                      }
+                                      });
                                     },
                                     child: const Text(
                                       "Daftar",
@@ -462,16 +481,27 @@ Future<bool> _registerSubmit(
       password2.isNotEmpty &&
       kontak.isNotEmpty &&
       status != "null") {
-    // check valid email
-    final bool emailValid = RegExp(
-            r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
-        .hasMatch(email);
-    if (!emailValid) {
-      throw "Email yang anda ketikkan tidak valid";
+    // nama lengkap
+    if (namaLengkap.length < 4) {
+      throw "Nama yang anda masukkan terlalu pendek";
+    }
+    // check email
+    if (email.length < 6) {
+      throw "Email yang anda masukkan terlalu pendek";
+    }
+    if (!email.isEmail) {
+      throw "Email yang anda masukkan tidak valid";
     }
     // check password
     if (password != password2) {
       throw "Password tidak sama";
+    }
+    if (password.length < 5 || password2.length < 5) {
+      throw "Password yang anda masukkan terlalu pendek";
+    }
+    // kontak
+    if (kontak.length < 4 || !kontak.isNumericOnly) {
+      throw "Kontak yang anda masukkan tidak valid";
     }
     // register
     var data = <String, dynamic>{};

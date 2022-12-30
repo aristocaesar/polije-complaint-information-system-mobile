@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:elapor_polije/pages/auth/login.dart';
 import 'package:elapor_polije/pages/auth/register.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 // import 'package:shared_preferences/shared_preferences.dart';
 
@@ -71,8 +72,11 @@ class _RecoveryState extends State<Recovery> {
                                   height: 10,
                                 ),
                                 TextFormField(
+                                  keyboardType: TextInputType.emailAddress,
+                                  maxLength: 64,
                                   controller: _emailController,
                                   decoration: InputDecoration(
+                                    counterText: "",
                                     hintText: "Ketikkan Email",
                                     border: OutlineInputBorder(
                                         borderRadius:
@@ -178,9 +182,19 @@ class _RecoveryState extends State<Recovery> {
 }
 
 Future<bool> _recoverySubmit(String email) async {
+  // check length email
+  if (email.isEmpty) {
+    throw "Harap melengkapi data email";
+  }
+  if (email.length < 6) {
+    throw "Email yang anda masukkan terlalu pendek";
+  }
+  // validate email
+  if (email.isEmail) {
+    throw "Email yang anda masukkan tidak valid";
+  }
   var data = <String, dynamic>{};
-  var userMail = (email.isNotEmpty) ? email : "email";
-  data["email"] = userMail.trim();
+  data["email"] = email.trim();
   var response = await http
       .post(Uri.parse("${dotenv.env['API_HOST']}/recovery"), body: data);
   var result = json.decode(response.body);

@@ -32,18 +32,18 @@ class _HeroComponentState extends State<HeroComponent> {
                 onPressed: () => {widget.drawer.currentState?.openDrawer()})
           ]),
         ),
-        const SizedBox(height: 50),
+        const SizedBox(height: 30),
         Center(
           child: Text(
             widget.title,
             style: const TextStyle(
-                fontSize: 45,
+                fontSize: 40,
                 color: Colors.white,
                 fontFamily: "Poppins",
                 fontWeight: FontWeight.bold),
           ),
         ),
-        const SizedBox(height: 100),
+        const SizedBox(height: 80),
       ],
     );
   }

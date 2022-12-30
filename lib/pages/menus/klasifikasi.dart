@@ -10,7 +10,6 @@ import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 
 class Klasifikasi extends StatefulWidget {
-  static const nameRoute = "/klasifikasi";
   final String title;
   const Klasifikasi({Key? key, required this.title}) : super(key: key);
 
@@ -27,6 +26,7 @@ class _KlasifikasiState extends State<Klasifikasi> {
   TextEditingController deskripsi = TextEditingController();
 
   // Text
+  bool hasInformasiLaporan = false;
   String btnLaporan = "Kirim Pengaduan";
   String titleDeskripsi = "Deskripsi";
   String hintTextDeskripsi = "Masukkan pengaduan";
@@ -68,9 +68,6 @@ class _KlasifikasiState extends State<Klasifikasi> {
     for (Map i in resultKategori) {
       kategori.add(i["nama"]);
     }
-    setState(() {
-      kategoriItems.addAll(kategori);
-    });
 
     // divisi
     List<String> divisi = [];
@@ -80,8 +77,13 @@ class _KlasifikasiState extends State<Klasifikasi> {
     for (Map i in resultdivisi) {
       divisi.add(i["nama"]);
     }
+
     setState(() {
+      kategoriItems.addAll(kategori);
       divisiItems.addAll(divisi);
+      kategoriSelected = kategoriItems[0];
+      divisiSelected = divisiItems[0];
+      hasInformasiLaporan = true;
     });
   }
 
@@ -118,267 +120,284 @@ class _KlasifikasiState extends State<Klasifikasi> {
                       child: Padding(
                           padding: const EdgeInsets.only(
                               top: 20.0, right: 20.0, left: 20.0),
-                          child: ListView(
-                            children: [
-                              // Katgeori
-                              const Text(
-                                "Kategori",
-                                style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    fontFamily: 'Poppins',
-                                    fontSize: 18),
-                              ),
-                              const SizedBox(
-                                height: 10,
-                              ),
-                              DropdownButtonFormField2(
-                                decoration: InputDecoration(
-                                  isDense: true,
-                                  contentPadding: EdgeInsets.zero,
-                                  border: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(6),
-                                  ),
-                                ),
-                                isExpanded: true,
-                                hint: const Text(
-                                  'Pilih Kategori',
-                                  style: TextStyle(fontSize: 14),
-                                ),
-                                icon: const Icon(
-                                  Icons.arrow_drop_down,
-                                  color: Colors.black45,
-                                ),
-                                iconSize: 30,
-                                buttonHeight: 60,
-                                buttonPadding:
-                                    const EdgeInsets.only(left: 20, right: 10),
-                                dropdownDecoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(15),
-                                ),
-                                items: kategoriItems
-                                    .map((item) => DropdownMenuItem<String>(
-                                          value: item.toString(),
-                                          child: Text(
-                                            item.toString(),
-                                            style: const TextStyle(
-                                              fontSize: 14,
-                                            ),
-                                          ),
-                                        ))
-                                    .toList(),
-                                onChanged: (value) {
-                                  kategoriSelected = value.toString();
-                                },
-                                onSaved: (value) {
-                                  kategoriSelected = value.toString();
-                                },
-                              ),
-                              const SizedBox(
-                                height: 30,
-                              ),
-                              const Text(
-                                "Divisi",
-                                style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    fontFamily: 'Poppins',
-                                    fontSize: 18),
-                              ),
-                              const SizedBox(
-                                height: 10,
-                              ),
-                              DropdownButtonFormField2(
-                                decoration: InputDecoration(
-                                  isDense: true,
-                                  contentPadding: EdgeInsets.zero,
-                                  border: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(6),
-                                  ),
-                                ),
-                                isExpanded: true,
-                                hint: const Text(
-                                  'Pilih Divisi',
-                                  style: TextStyle(fontSize: 14),
-                                ),
-                                icon: const Icon(
-                                  Icons.arrow_drop_down,
-                                  color: Colors.black45,
-                                ),
-                                iconSize: 30,
-                                buttonHeight: 60,
-                                buttonPadding:
-                                    const EdgeInsets.only(left: 20, right: 10),
-                                dropdownDecoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(15),
-                                ),
-                                items: divisiItems
-                                    .map((item) => DropdownMenuItem<String>(
-                                          value: item,
-                                          child: Text(
-                                            item,
-                                            style: const TextStyle(
-                                              fontSize: 14,
-                                            ),
-                                          ),
-                                        ))
-                                    .toList(),
-                                onChanged: (value) {
-                                  divisiSelected = value.toString();
-                                },
-                                onSaved: (value) {
-                                  divisiSelected = value.toString();
-                                },
-                              ),
-                              const SizedBox(
-                                height: 30,
-                              ),
-                              // Deskripsi
-                              Text(
-                                titleDeskripsi,
-                                style: const TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    fontFamily: 'Poppins',
-                                    fontSize: 18),
-                              ),
-                              const SizedBox(
-                                height: 10,
-                              ),
-                              TextFormField(
-                                controller: deskripsi,
-                                maxLines: 8,
-                                decoration: InputDecoration(
-                                  hintText: hintTextDeskripsi,
-                                  border: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(5.0)),
-                                ),
-                              ),
-                              const SizedBox(
-                                height: 30,
-                              ),
-                              const Text(
-                                "Lampiran",
-                                style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    fontFamily: 'Poppins',
-                                    fontSize: 18),
-                              ),
-                              const SizedBox(
-                                height: 10,
-                              ),
-                              Row(
-                                children: [
-                                  Expanded(
-                                    child: TextFormField(
-                                        readOnly: true,
-                                        decoration: InputDecoration(
-                                          filled: true,
-                                          fillColor: Colors.white,
-                                          border: const OutlineInputBorder(
-                                              borderRadius: BorderRadius.all(
-                                                Radius.circular(5.0),
-                                              ),
-                                              borderSide: BorderSide(
-                                                  color: Colors.white,
-                                                  width: 2)),
-                                          hintText: namaLampiran,
-                                          contentPadding:
-                                              const EdgeInsets.all(10.0),
-                                        ),
-                                        style: const TextStyle(fontSize: 16.0)),
-                                  ),
-                                  const SizedBox(width: 15),
-                                  ElevatedButton.icon(
-                                    icon: const Icon(
-                                      Icons.upload_file,
-                                      color: Colors.white,
-                                      size: 24.0,
+                          child: !hasInformasiLaporan
+                              ? ListView(children: const [
+                                  Center(
+                                    child: Text(
+                                      "Sedang Memuat ...",
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          fontFamily: 'Poppins',
+                                          fontSize: 18),
                                     ),
-                                    label: const Text('Pilih File',
-                                        style: TextStyle(fontSize: 16.0)),
-                                    onPressed: () {
-                                      selectFile().then((value) {
-                                        setState(() {
-                                          namaLampiran = value["nama"];
-                                          pathLampiran = value["path"];
-                                        });
-                                      }).catchError((error) {
-                                        ScaffoldMessenger.of(context)
-                                            .showSnackBar(SnackBar(
-                                          content: Text(error.toString()),
-                                        ));
-                                      });
-                                    },
-                                    style: ElevatedButton.styleFrom(
-                                      backgroundColor: const Color.fromARGB(
-                                          209, 15, 76, 117),
-                                      minimumSize: const Size(122, 48),
-                                      maximumSize: const Size(122, 48),
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius:
-                                            BorderRadius.circular(5.0),
+                                  ),
+                                ])
+                              : ListView(
+                                  children: [
+                                    // Katgeori
+                                    const Text(
+                                      "Kategori",
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          fontFamily: 'Poppins',
+                                          fontSize: 18),
+                                    ),
+                                    const SizedBox(
+                                      height: 10,
+                                    ),
+                                    DropdownButtonFormField2(
+                                      decoration: InputDecoration(
+                                        isDense: true,
+                                        contentPadding: EdgeInsets.zero,
+                                        border: OutlineInputBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(6),
+                                        ),
+                                      ),
+                                      isExpanded: true,
+                                      value: kategoriSelected,
+                                      icon: const Icon(
+                                        Icons.arrow_drop_down,
+                                        color: Colors.black45,
+                                      ),
+                                      iconSize: 30,
+                                      buttonHeight: 60,
+                                      buttonPadding: const EdgeInsets.only(
+                                          left: 20, right: 10),
+                                      dropdownDecoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(15),
+                                      ),
+                                      items: kategoriItems
+                                          .map((item) =>
+                                              DropdownMenuItem<String>(
+                                                value: item,
+                                                child: Text(
+                                                  item,
+                                                  style: const TextStyle(
+                                                    fontSize: 14,
+                                                  ),
+                                                ),
+                                              ))
+                                          .toList(),
+                                      onChanged: (value) {
+                                        kategoriSelected = value.toString();
+                                      },
+                                      // onSaved: (value) {
+                                      //   kategoriSelected = value.toString();
+                                      // },
+                                    ),
+                                    const SizedBox(
+                                      height: 30,
+                                    ),
+                                    const Text(
+                                      "Divisi",
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          fontFamily: 'Poppins',
+                                          fontSize: 18),
+                                    ),
+                                    const SizedBox(
+                                      height: 10,
+                                    ),
+                                    DropdownButtonFormField2(
+                                      decoration: InputDecoration(
+                                        isDense: true,
+                                        contentPadding: EdgeInsets.zero,
+                                        border: OutlineInputBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(6),
+                                        ),
+                                      ),
+                                      isExpanded: true,
+                                      value: divisiSelected,
+                                      icon: const Icon(
+                                        Icons.arrow_drop_down,
+                                        color: Colors.black45,
+                                      ),
+                                      iconSize: 30,
+                                      buttonHeight: 60,
+                                      buttonPadding: const EdgeInsets.only(
+                                          left: 20, right: 10),
+                                      dropdownDecoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(15),
+                                      ),
+                                      items: divisiItems
+                                          .map((item) =>
+                                              DropdownMenuItem<String>(
+                                                value: item,
+                                                child: Text(
+                                                  item,
+                                                  style: const TextStyle(
+                                                    fontSize: 14,
+                                                  ),
+                                                ),
+                                              ))
+                                          .toList(),
+                                      onChanged: (value) {
+                                        divisiSelected = value.toString();
+                                      },
+                                      onSaved: (value) {
+                                        divisiSelected = value.toString();
+                                      },
+                                    ),
+                                    const SizedBox(
+                                      height: 30,
+                                    ),
+                                    // Deskripsi
+                                    Text(
+                                      titleDeskripsi,
+                                      style: const TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          fontFamily: 'Poppins',
+                                          fontSize: 18),
+                                    ),
+                                    const SizedBox(
+                                      height: 10,
+                                    ),
+                                    TextFormField(
+                                      controller: deskripsi,
+                                      maxLines: 8,
+                                      maxLength: 1024,
+                                      decoration: InputDecoration(
+                                        hintText: hintTextDeskripsi,
+                                        border: OutlineInputBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(5.0)),
                                       ),
                                     ),
-                                  ),
-                                ],
-                              ),
-                              const SizedBox(height: 10),
-                              const Text(
-                                "*Maksimal ukuran lampiran 10 MB",
-                                style: TextStyle(
-                                    fontStyle: FontStyle.italic,
-                                    fontSize: 12,
-                                    fontWeight: FontWeight.w300),
-                              ),
-                              const SizedBox(
-                                height: 50,
-                              ),
-                              SizedBox(
-                                width: 200,
-                                height: 60,
-                                child: TextButton(
-                                  style: TextButton.styleFrom(
-                                    backgroundColor:
-                                        const Color.fromRGBO(15, 76, 117, 1),
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(8),
+                                    const SizedBox(
+                                      height: 30,
                                     ),
-                                  ),
-                                  onPressed: () {
-                                    _sendLaporan(
-                                            widget.title,
-                                            userState.id,
-                                            kategoriSelected,
-                                            divisiSelected,
-                                            deskripsi.text,
-                                            pathLampiran,
-                                            context)
-                                        .then((value) {
-                                      Navigator.pop(context);
-                                      ScaffoldMessenger.of(context)
-                                          .showSnackBar(SnackBar(
-                                        content: Text(succesMessage),
-                                      ));
-                                    }).catchError((error) {
-                                      ScaffoldMessenger.of(context)
-                                          .showSnackBar(SnackBar(
-                                        content: Text(error.toString()),
-                                      ));
-                                    });
-                                  },
-                                  child: Text(
-                                    btnLaporan,
-                                    style: const TextStyle(
-                                        color: Color(0xffffffff),
-                                        fontSize: 18,
-                                        fontFamily: "Poppins",
-                                        fontWeight: FontWeight.bold),
-                                  ),
-                                ),
-                              ),
-                              const SizedBox(
-                                height: 80,
-                              ),
-                            ],
-                          )),
+                                    const Text(
+                                      "Lampiran",
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          fontFamily: 'Poppins',
+                                          fontSize: 18),
+                                    ),
+                                    const SizedBox(
+                                      height: 10,
+                                    ),
+                                    Row(
+                                      children: [
+                                        Expanded(
+                                          child: TextFormField(
+                                              readOnly: true,
+                                              decoration: InputDecoration(
+                                                filled: true,
+                                                fillColor: Colors.white,
+                                                border:
+                                                    const OutlineInputBorder(
+                                                        borderRadius:
+                                                            BorderRadius.all(
+                                                          Radius.circular(5.0),
+                                                        ),
+                                                        borderSide: BorderSide(
+                                                            color: Colors.white,
+                                                            width: 2)),
+                                                hintText: namaLampiran,
+                                                contentPadding:
+                                                    const EdgeInsets.all(10.0),
+                                              ),
+                                              style: const TextStyle(
+                                                  fontSize: 16.0)),
+                                        ),
+                                        const SizedBox(width: 15),
+                                        ElevatedButton.icon(
+                                          icon: const Icon(
+                                            Icons.upload_file,
+                                            color: Colors.white,
+                                            size: 24.0,
+                                          ),
+                                          label: const Text('Pilih File',
+                                              style: TextStyle(fontSize: 16.0)),
+                                          onPressed: () {
+                                            selectFile().then((value) {
+                                              setState(() {
+                                                namaLampiran = value["nama"];
+                                                pathLampiran = value["path"];
+                                              });
+                                            }).catchError((error) {
+                                              ScaffoldMessenger.of(context)
+                                                  .showSnackBar(SnackBar(
+                                                content: Text(error.toString()),
+                                              ));
+                                            });
+                                          },
+                                          style: ElevatedButton.styleFrom(
+                                            backgroundColor:
+                                                const Color.fromARGB(
+                                                    209, 15, 76, 117),
+                                            minimumSize: const Size(122, 48),
+                                            maximumSize: const Size(122, 48),
+                                            shape: RoundedRectangleBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(5.0),
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                    const SizedBox(height: 10),
+                                    const Text(
+                                      "*Maksimal ukuran lampiran 10 MB",
+                                      style: TextStyle(
+                                          fontStyle: FontStyle.italic,
+                                          fontSize: 12,
+                                          fontWeight: FontWeight.w300),
+                                    ),
+                                    const SizedBox(
+                                      height: 50,
+                                    ),
+                                    SizedBox(
+                                      width: 200,
+                                      height: 60,
+                                      child: TextButton(
+                                        style: TextButton.styleFrom(
+                                          backgroundColor: const Color.fromRGBO(
+                                              15, 76, 117, 1),
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(8),
+                                          ),
+                                        ),
+                                        onPressed: () {
+                                          _sendLaporan(
+                                                  widget.title,
+                                                  userState.id,
+                                                  kategoriSelected,
+                                                  divisiSelected,
+                                                  deskripsi.text,
+                                                  pathLampiran,
+                                                  context)
+                                              .then((value) {
+                                            Navigator.pop(context);
+                                            ScaffoldMessenger.of(context)
+                                                .showSnackBar(SnackBar(
+                                              content: Text(succesMessage),
+                                            ));
+                                          }).catchError((error) {
+                                            ScaffoldMessenger.of(context)
+                                                .showSnackBar(SnackBar(
+                                              content: Text(error.toString()),
+                                            ));
+                                          });
+                                        },
+                                        child: Text(
+                                          btnLaporan,
+                                          style: const TextStyle(
+                                              color: Color(0xffffffff),
+                                              fontSize: 18,
+                                              fontFamily: "Poppins",
+                                              fontWeight: FontWeight.bold),
+                                        ),
+                                      ),
+                                    ),
+                                    const SizedBox(
+                                      height: 80,
+                                    ),
+                                  ],
+                                )),
                     ),
                   ),
                 ),
@@ -397,34 +416,40 @@ Future<Map<String, dynamic>> selectFile() async {
     lampiran["path"] = file.path;
     return lampiran;
   } else {
-    throw "Gagal menambahkan lampiran";
+    throw "Gagal mencantumkan lampiran";
   }
 }
 
 // send informasi
 Future<bool> _sendLaporan(String klasifikasi, String id, String kategori,
     String divisi, String deskripsi, String lampiran, BuildContext ctx) async {
+  // cek data tidak kosong
   if (kategori.isEmpty || divisi.isEmpty || deskripsi.isEmpty) {
     throw "Harap melengkapi informasi";
   }
+  // cek panjang deskripsi
+  if (deskripsi.length < 18) {
+    throw "Deskripsi ${klasifikasi.toLowerCase()} terlalu pendek";
+  } else if (deskripsi.length > 1024) {
+    throw "Deskripsi ${klasifikasi.toLowerCase()} terlalu pajang";
+  }
 
-  // send aduan
-  var aduan = http.MultipartRequest("POST",
+  // send laporan
+  var laporan = http.MultipartRequest("POST",
       Uri.parse("${dotenv.env['API_HOST']}/${klasifikasi.toLowerCase()}"));
-  aduan.fields["id_user_mobile"] = id;
-  aduan.fields["kategori"] = kategori;
-  aduan.fields["divisi"] = divisi;
-  aduan.fields["deskripsi"] = deskripsi;
+  laporan.fields["id_user_mobile"] = id;
+  laporan.fields["deskripsi"] = deskripsi;
+  laporan.fields["kategori"] = kategori;
+  laporan.fields["divisi"] = divisi;
+
   if (lampiran.isNotEmpty) {
-    aduan.files.add(await http.MultipartFile.fromPath('foto', lampiran));
+    laporan.files.add(await http.MultipartFile.fromPath('foto', lampiran));
   }
-  aduan.fields["lokasi"] = "Akses tidak diberikan";
-
-  var result = await aduan.send();
-
+  laporan.fields["lokasi"] = "Akses tidak diberikan";
+  var result = await laporan.send();
+  var responseMsg = json.decode(await result.stream.bytesToString());
   if (result.statusCode != 201) {
-    throw "Gagal mengirim $klasifikasi";
+    throw responseMsg["data"]["message"];
   }
-
   return true;
 }

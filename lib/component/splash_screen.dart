@@ -1,6 +1,8 @@
 import 'dart:async';
+import 'package:elapor_polije/pages/landing.dart';
 import 'package:flutter/material.dart';
 import 'package:elapor_polije/pages/auth/login.dart';
+import 'package:elapor_polije/session/session.dart';
 
 class SplashScreen extends StatefulWidget {
   static const nameRoute = "/splashscreen";
@@ -18,9 +20,16 @@ class _SplashScreenState extends State<SplashScreen> {
   }
 
   splashScreenStart() async {
-    return Timer(const Duration(seconds: 5), () {
-      Navigator.pop(context);
-      Navigator.of(context).pushNamed(Login.nameRoute);
+    return Timer(const Duration(seconds: 4), () {
+      // jika ada session maka jangan login lagi
+      Session().get("id").then((value) {
+        if (value != "null") {
+          Session().restoreSession();
+          Navigator.of(context).pushReplacementNamed(Landing.nameRoute);
+        } else {
+          Navigator.of(context).pushReplacementNamed(Login.nameRoute);
+        }
+      });
     });
   }
 
